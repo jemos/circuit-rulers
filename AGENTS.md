@@ -81,6 +81,7 @@ Doc (model/types.ts)                 the saved document: components, wires, rule
   - `Canvas.tsx` handles all pointer interaction and SVG rendering.
   - `useDocHistory.ts` provides undo/redo, and `Inspector.tsx`,
     `TimePanel.tsx` and `RulerView.tsx` cover the panels and rulers.
+  - `About.tsx` is the About dialog, opened from the top bar.
 - **`src/App.tsx`** owns UI state (tool, selection, view, time index, playback),
   derived data (netlist, sim, ruler layouts), keyboard shortcuts and file I/O.
 

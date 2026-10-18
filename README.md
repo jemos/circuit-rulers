@@ -1,6 +1,8 @@
 # Circuit Rulers
 
 An interactive schematic editor for building intuition about analog circuits.
+Try it at **[circuits.jemos.net](https://circuits.jemos.net)**.
+
 Draw a circuit, scrub through time, and place **voltage rulers** next to the
 schematic. You build a ruler by clicking a path of nodes (e.g. Vdd → middle →
 GND). It shows where each of those nodes sits and the voltage from each node to
@@ -164,4 +166,10 @@ on the code.
 ## About
 
 This project was AI-generated: written with [Claude Code](https://claude.com/claude-code)
-from an idea and a hand-drawn sketch, then refined through review.
+from an idea and a hand-drawn sketch by Jean-François Mousinho
+([jemos.net](https://jemos.net)), then refined through review.
+
+## License
+
+[CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/): you may share
+and adapt it with credit, but not for commercial purposes. See [LICENSE](LICENSE).

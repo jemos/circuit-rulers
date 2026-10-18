@@ -8,6 +8,7 @@ import { netPoint, probeNets, toggleProbe } from './model/probes';
 import { arrangeRulers, layoutRuler, maxLanes, NODE_COLORS, RulerLayoutResult, rulerWidth } from './model/ruler';
 import { Doc, Pt } from './model/types';
 import { simulate } from './sim/simulate';
+import { About } from './ui/About';
 import { Canvas, newRulerFrame, RulerInfo, Tool, View } from './ui/Canvas';
 import { Inspector } from './ui/Inspector';
 import { SymbolIcon } from './ui/Symbol';
@@ -80,6 +81,7 @@ export default function App() {
   const [showCurrents, setShowCurrents] = useState(true);
   const [showWireCurrents, setShowWireCurrents] = useState(false);
   const [showRegions, setShowRegions] = useState(true);
+  const [showAbout, setShowAbout] = useState(false);
   const [pending, setPending] = useState<Pt | null>(null);
   const [rulerPath, setRulerPath] = useState<Pt[]>([]);
   useEffect(() => setRulerPath([]), [tool]);
@@ -316,6 +318,7 @@ export default function App() {
   // --- keyboard ------------------------------------------------------------------
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      if (showAbout) return;
       const el = e.target as HTMLElement;
       if (el.closest('input, select, textarea')) {
         if (e.key === 'Escape') el.blur();
@@ -409,7 +412,7 @@ export default function App() {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [history, doc, tool, pending, rulerPath, finishRuler, selection, selectedRuler, deleteSelection, snapshot, playing, n, kc]);
+  }, [history, doc, tool, pending, rulerPath, finishRuler, selection, selectedRuler, deleteSelection, snapshot, playing, n, kc, showAbout]);
 
   // --- file I/O --------------------------------------------------------------------
   const saveFile = () => {
@@ -523,6 +526,7 @@ export default function App() {
               ? `${n - 1} steps of ${formatEng(doc.sim.stopTime / doc.sim.steps, 's')} · ${simMs.toFixed(0)} ms`
               : 'Empty circuit'}
         </span>
+        <button onClick={() => setShowAbout(true)}>About</button>
       </header>
 
       <nav className="toolbar">
@@ -633,6 +637,8 @@ export default function App() {
         auxOptions={auxOptions}
         onToggleAux={toggleAux}
       />
+
+      {showAbout && <About onClose={() => setShowAbout(false)} />}
     </div>
   );
 }
