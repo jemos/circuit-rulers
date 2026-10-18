@@ -13,11 +13,13 @@ import { RulerView } from './RulerView';
 import { Symbol } from './Symbol';
 import type { DocHistory } from './useDocHistory';
 import { applyMove, isDegenerate, route } from '../model/edit';
+import { toggleProbe } from '../model/probes';
 
 export type Tool =
   | { type: 'select' }
   | { type: 'wire' }
   | { type: 'ruler'; editId?: string } // editId: re-picking the path of an existing ruler
+  | { type: 'probe' }
   | { type: 'place'; kind: ComponentKind; rot: Rot; flip: boolean };
 
 export interface View {
@@ -47,6 +49,8 @@ interface Props {
   setHoverNet: (n: number | null) => void;
   rulers: Map<string, RulerInfo>;
   netColors: Map<number, string>;
+  /** Colour of each probed net's trace in the plot. */
+  probeColors: Map<number, string>;
   showCurrents: boolean;
   showRegions: boolean;
   /** Tool-specific transient state, owned by the parent so Escape can clear it. */
@@ -141,7 +145,7 @@ function Arrow({ at, dir, size }: { at: Pt; dir: Pt; size: number }) {
 
 export function Canvas(props: Props) {
   const { history, nl, sim, k, selection, setSelection, tool, setTool, view, setView } = props;
-  const { hoverNet, setHoverNet, rulers, netColors, showCurrents, showRegions, pending, setPending } = props;
+  const { hoverNet, setHoverNet, rulers, netColors, probeColors, showCurrents, showRegions, pending, setPending } = props;
   const { rulerPath, setRulerPath, finishRuler } = props;
   const doc = history.doc;
   const svgRef = useRef<SVGSVGElement>(null);
@@ -253,6 +257,23 @@ export function Canvas(props: Props) {
       }
       setRulerPath([...rulerPath, p]);
       setStatus(null);
+      return;
+    }
+
+    if (tool.type === 'probe') {
+      const net = netAt(nl, doc.wires, p);
+      if (net === undefined) {
+        setStatus('Click on a wire or a pin to pick a node.');
+        return;
+      }
+      const { name, node } = nl.nets[net];
+      if (node < 0) {
+        setStatus(`${name} is the 0 V reference.`);
+        return;
+      }
+      const on = probeColors.has(net);
+      history.commit((d) => toggleProbe(d, nl, p));
+      setStatus(on ? `Removed ${name} from the plot.` : `Added ${name} to the plot.`);
       return;
     }
 
@@ -495,6 +516,13 @@ export function Canvas(props: Props) {
               <circle className="cursor-dot" cx={cursorSnap.x} cy={cursorSnap.y} r={0.2} />
             </g>
           )}
+          {tool.type === 'probe' &&
+            doc.probes.map((q, i) => {
+              const net = netAt(nl, doc.wires, q);
+              const color = net !== undefined ? probeColors.get(net) : undefined;
+              return color ? <circle key={i} className="probe-mark" cx={q.x} cy={q.y} r={0.38} style={{ stroke: color }} /> : null;
+            })}
+          {tool.type === 'probe' && <circle className="cursor-dot" cx={cursorSnap.x} cy={cursorSnap.y} r={0.2} />}
           {box && (
             <rect
               className="select-box"
@@ -538,9 +566,11 @@ export function Canvas(props: Props) {
                 ? rulerPath.length === 0
                   ? 'Click the nodes the ruler should measure, in order (wires or pins)'
                   : `${rulerPath.map((q) => nl.nets[netAt(nl, doc.wires, q) ?? -1]?.name ?? '?').join(' → ')} · click the next node · Enter or double-click to finish · ⌫ undo · Esc cancel`
-                : tool.type === 'place'
-                  ? `Click to place ${KINDS[tool.kind].title.toLowerCase()} · R rotate · F flip · Esc done`
-                  : '')}
+                : tool.type === 'probe'
+                  ? 'Click a node to add it to the plot as an extra trace · click it again to remove · Esc done'
+                  : tool.type === 'place'
+                    ? `Click to place ${KINDS[tool.kind].title.toLowerCase()} · R rotate · F flip · Esc done`
+                    : '')}
         </div>
       )}
     </div>

@@ -32,6 +32,7 @@ npm run build      # static build in dist/
 | Wire | `W`, click corners, click a pin or a wire to finish (`Esc` stops). |
 | Voltage ruler | `U`, click the nodes in order, then `Enter`, double-click the last node, or right-click. `⌫` undoes the last click, `Esc` cancels. |
 | Change a ruler's path | Select it: remove nodes, **Reverse**, or **Re-pick path** in the inspector. |
+| Extra plot trace | `T`, click a node to add it to the plot, click it again to remove. Or use **+ trace** in the plot legend. |
 | Snapshot a ruler | Select it, press `P`: a pinned copy at the current time appears. |
 | Time | Drag the scrubber or the plot, `Space` play/pause, `←`/`→` step (`⇧` ×10). |
 | Edit values | Select a part; values accept engineering notation (`4.7k`, `10u`, `1meg`). |
@@ -86,6 +87,10 @@ The inspector and hover tooltip show the voltages and the rule that decided it.
 
 The plot at the bottom shows the selected ruler's nodes over the whole run, with
 the time cursor and pinned rulers marked. Click or drag on it to scrub.
+
+Probed nodes are drawn as fainter extra traces under the ruler's, whichever
+ruler is selected, and count towards the plot's vertical range. Remove one with
+its **×** in the legend. Probes are saved with the circuit.
 
 ## Examples
 

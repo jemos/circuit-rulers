@@ -3,9 +3,12 @@ import { formatEng } from '../model/units';
 import type { SimResult } from '../sim/simulate';
 
 export interface Trace {
+  net: number;
   name: string;
   color: string;
   values: ArrayLike<number>;
+  /** Added with the probe tool: drawn fainter, under the ruler's traces. */
+  aux?: boolean;
 }
 
 export interface Marker {
@@ -24,6 +27,9 @@ interface Props {
   traces: Trace[];
   tracesTitle: string;
   markers: Marker[];
+  /** Nets that can be added as aux traces. */
+  auxOptions: { net: number; name: string }[];
+  onToggleAux: (net: number) => void;
 }
 
 const PLOT_H = 148;
@@ -41,7 +47,7 @@ function niceTicks(lo: number, hi: number, count: number): number[] {
 }
 
 export function TimePanel(props: Props) {
-  const { sim, k, setK, playing, setPlaying, speed, setSpeed, traces, tracesTitle, markers } = props;
+  const { sim, k, setK, playing, setPlaying, speed, setSpeed, traces, tracesTitle, markers, auxOptions, onToggleAux } = props;
   const wrapRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(800);
   const n = sim?.times.length ?? 0;
@@ -140,9 +146,8 @@ export function TimePanel(props: Props) {
               {formatEng(tt, 's', 2)}
             </text>
           ))}
-          {paths.map((d, i) => (
-            <path key={traces[i].name + i} d={d} className="trace" stroke={traces[i].color} />
-          ))}
+          {paths.map((d, i) => traces[i].aux && <path key={`aux${traces[i].net}`} d={d} className="trace aux" stroke={traces[i].color} />)}
+          {paths.map((d, i) => !traces[i].aux && <path key={traces[i].net} d={d} className="trace" stroke={traces[i].color} />)}
           {markers.map((m, i) => (
             <g key={i} className="marker">
               <line x1={xOfK(m.k)} x2={xOfK(m.k)} y1={M.top} y2={M.top + innerH} />
@@ -156,11 +161,42 @@ export function TimePanel(props: Props) {
         <div className="legend">
           <span className="legend-title">{tracesTitle}</span>
           {traces.map((tr) => (
-            <span key={tr.name} className="legend-item">
+            <span key={`${tr.aux ? 'aux' : ''}${tr.net}`} className={`legend-item${tr.aux ? ' aux' : ''}`}>
               <span className="swatch" style={{ background: tr.color }} />
               {tr.name}
+              {tr.aux && (
+                <button
+                  className="legend-remove"
+                  title={`Remove ${tr.name} from the plot`}
+                  onPointerDown={(e) => e.stopPropagation()}
+                  onClick={() => onToggleAux(tr.net)}
+                >
+                  ×
+                </button>
+              )}
             </span>
           ))}
+          {sim && auxOptions.length > 0 && (
+            <select
+              className="legend-add"
+              value=""
+              title="Add a node to the plot as an extra trace (or use the probe tool, T)"
+              onPointerDown={(e) => e.stopPropagation()}
+              onChange={(e) => {
+                if (e.target.value !== '') onToggleAux(Number(e.target.value));
+                e.target.blur();
+              }}
+            >
+              <option value="" disabled>
+                + trace
+              </option>
+              {auxOptions.map((o) => (
+                <option key={o.net} value={o.net}>
+                  {o.name}
+                </option>
+              ))}
+            </select>
+          )}
         </div>
       </div>
       <div className="transport">

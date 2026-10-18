@@ -3,6 +3,7 @@ import { simulate } from '../sim/simulate';
 import { DocBuilder, isDoc } from './doc';
 import { EXAMPLES } from './examples';
 import { buildNetlist, netAt } from './netlist';
+import { netPoint, probeNets, toggleProbe } from './probes';
 import { layoutRuler, rulerAt } from './ruler';
 
 function divider() {
@@ -156,6 +157,38 @@ describe('ruler', () => {
       { x: 12, y: 12 },
     ]);
     expect(old.rulers[0].top).toBeUndefined();
+  });
+});
+
+describe('probes', () => {
+  it('toggles a net on and off from any point on it', () => {
+    const { doc } = divider();
+    const nl = buildNetlist(doc);
+    const names = () => probeNets(doc, nl).map((n) => nl.nets[n].name);
+    toggleProbe(doc, nl, { x: 12, y: 8 });
+    toggleProbe(doc, nl, { x: 4, y: 5 }); // along a wire
+    expect(names()).toEqual(['N1', 'Vdd']);
+    toggleProbe(doc, nl, { x: 12, y: 3 }); // Vdd again, through the other label
+    expect(names()).toEqual(['N1']);
+    toggleProbe(doc, nl, { x: 30, y: 30 }); // nothing there
+    expect(doc.probes).toHaveLength(1);
+  });
+
+  it('plots each net once and never ground or a detached point', () => {
+    const { doc } = divider();
+    const nl = buildNetlist(doc);
+    doc.probes = [{ x: 12, y: 2 }, { x: 12, y: 12 }, { x: 4, y: 4 }, { x: 30, y: 30 }];
+    expect(probeNets(doc, nl).map((n) => nl.nets[n].name)).toEqual(['Vdd']);
+    const n1 = netAt(nl, doc.wires, { x: 12, y: 8 })!;
+    expect(netAt(nl, doc.wires, netPoint(nl, n1)!)).toBe(n1);
+  });
+
+  it('adds an empty probe list to documents saved before probes', () => {
+    const { doc } = divider();
+    const old = JSON.parse(JSON.stringify(doc));
+    delete old.probes;
+    expect(isDoc(old)).toBe(true);
+    expect(old.probes).toEqual([]);
   });
 });
 

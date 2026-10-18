@@ -4,6 +4,7 @@ import { EXAMPLES } from './model/examples';
 import { componentBounds, rotateCW } from './model/geometry';
 import { KINDS, PALETTE } from './model/kinds';
 import { buildNetlist } from './model/netlist';
+import { netPoint, probeNets, toggleProbe } from './model/probes';
 import { arrangeRulers, layoutRuler, maxLanes, NODE_COLORS, RulerLayoutResult, rulerWidth } from './model/ruler';
 import { Doc, Pt } from './model/types';
 import { simulate } from './sim/simulate';
@@ -137,19 +138,48 @@ export default function App() {
     return m;
   }, [selectedRuler, rulerLayouts, nl]);
 
+  const probed = useMemo(() => probeNets(doc, nl), [doc.probes, doc.wires, nl]);
+
+  // Probed nets in colours the focused ruler isn't using; a net on the ruler keeps the ruler's colour.
+  const probeColors = useMemo(() => {
+    const m = new Map<number, string>();
+    const nodes = focusLayout?.ok ? focusLayout.layout.nodes : [];
+    const free = [...NODE_COLORS].reverse().filter((c) => !nodes.some((node) => node.color === c));
+    let j = 0;
+    for (const net of probed) {
+      const own = nodes.find((node) => node.net === net)?.color;
+      m.set(net, own ?? (free.length ? free[j++ % free.length] : NODE_COLORS[0]));
+    }
+    return m;
+  }, [probed, focusLayout]);
+
   const traces: Trace[] = useMemo(() => {
     if (!sim) return [];
     const out: Trace[] = [];
-    const add = (net: number, color: string) => {
+    const add = (net: number, color: string, aux = false) => {
       const node = nl.nets[net]?.node ?? -1;
       if (node < 0) return;
-      out.push({ name: nl.nets[net].name, color, values: sim.nodeV[node] });
+      out.push({ net, name: nl.nets[net].name, color, values: sim.nodeV[node], aux });
     };
     if (focusLayout?.ok) for (const node of focusLayout.layout.nodes) add(node.net, node.color);
-    if (hoverNet !== null && !out.some((t) => t.name === nl.nets[hoverNet]?.name)) add(hoverNet, '#ffffff');
+    for (const net of probed) add(net, probeColors.get(net)!, true);
+    if (hoverNet !== null && !out.some((t) => t.net === hoverNet)) add(hoverNet, '#ffffff');
     if (!out.length) nl.nets.slice(0, 6).forEach((net, i) => add(net.index, NODE_COLORS[i % NODE_COLORS.length]));
     return out;
-  }, [sim, nl, focusLayout, hoverNet]);
+  }, [sim, nl, focusLayout, probed, probeColors, hoverNet]);
+
+  const auxOptions = useMemo(
+    () => nl.nets.filter((net) => net.node >= 0 && !probed.includes(net.index)).map((net) => ({ net: net.index, name: net.name })),
+    [nl, probed],
+  );
+
+  const toggleAux = useCallback(
+    (net: number) => {
+      const p = netPoint(nl, net);
+      if (p) history.commit((d) => toggleProbe(d, nl, p));
+    },
+    [nl, history],
+  );
 
   const markers: Marker[] = useMemo(
     () =>
@@ -341,6 +371,10 @@ export default function App() {
           setPending(null);
           setTool({ type: 'ruler' });
           break;
+        case 't':
+          setPending(null);
+          setTool({ type: 'probe' });
+          break;
         case 'v':
         case 's':
           setPending(null);
@@ -435,7 +469,7 @@ export default function App() {
         </select>
         <button
           onClick={() =>
-            loadDoc({ version: 1, components: [], wires: [], rulers: [], sim: { ...doc.sim }, nextId: 1 })
+            loadDoc({ version: 1, components: [], wires: [], rulers: [], probes: [], sim: { ...doc.sim }, nextId: 1 })
           }
         >
           New
@@ -508,6 +542,14 @@ export default function App() {
           </svg>,
           tool.type === 'ruler',
         )}
+        {toolBtn(
+          { type: 'probe' },
+          'Probe (T): click a node to add or remove it as an extra trace in the plot',
+          <svg viewBox="0 0 16 16" width={18} height={18}>
+            <path d="M2 14l3.5-3.5M4.5 8.5l3 3L14 5l-3-3z" stroke="currentColor" strokeWidth={1.5} strokeLinejoin="round" fill="none" />
+          </svg>,
+          tool.type === 'probe',
+        )}
         <div className="toolbar-sep" />
         {PALETTE.map((kind) =>
           toolBtn(
@@ -535,6 +577,7 @@ export default function App() {
           setHoverNet={setHoverNet}
           rulers={rulers}
           netColors={netColors}
+          probeColors={probeColors}
           showCurrents={showCurrents}
           showRegions={showRegions}
           pending={pending}
@@ -576,6 +619,8 @@ export default function App() {
         traces={traces}
         tracesTitle={focusRuler ? focusRuler.name : 'Nodes'}
         markers={markers}
+        auxOptions={auxOptions}
+        onToggleAux={toggleAux}
       />
     </div>
   );

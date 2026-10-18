@@ -436,6 +436,13 @@ kbd {
   stroke-width: 2px;
   vector-effect: non-scaling-stroke;
 }
+.probe-mark {
+  fill: none;
+  stroke-width: 2px;
+  stroke-dasharray: 2 2;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
 .ruler-pick-num {
   font-family: var(--mono);
   font-size: 0.6px;
@@ -664,6 +671,10 @@ kbd {
   stroke-width: 1.6px;
   stroke-linejoin: round;
 }
+.trace.aux {
+  stroke-width: 1.3px;
+  opacity: 0.45;
+}
 .plot .cursor {
   stroke: var(--accent);
   stroke-width: 1.5px;
@@ -696,6 +707,33 @@ kbd {
   align-items: center;
   gap: 5px;
   font-family: var(--mono);
+}
+.legend-item.aux {
+  color: var(--ink-3);
+}
+.legend-item.aux .swatch {
+  opacity: 0.45;
+}
+.legend-remove,
+.legend-add {
+  pointer-events: auto;
+  cursor: pointer;
+  font-size: 11px;
+  line-height: 1;
+}
+.legend-remove {
+  border: none;
+  background: none;
+  padding: 0 2px;
+  color: var(--ink-3);
+}
+.legend-remove:hover:not(:disabled) {
+  color: var(--ink);
+}
+.legend-add {
+  padding: 1px 4px;
+  border-radius: 4px;
+  color: var(--ink-3);
 }
 .transport {
   display: flex;

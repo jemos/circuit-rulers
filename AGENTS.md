@@ -59,7 +59,7 @@ Stack: TypeScript, React 18, Vite, with the schematic rendered as SVG. There is
 no backend and no state library. Data flows one way:
 
 ```
-Doc (model/types.ts)                 the saved document: components, wires, rulers, sim settings
+Doc (model/types.ts)                 the saved document: components, wires, rulers, probes, sim settings
   └─ buildNetlist (model/netlist.ts) union-find over grid points → nets, pin→net map, SimInput
        └─ simulate (sim/simulate.ts) DC op point + fixed-grid transient → SimResult
             ├─ layoutRuler / rulerAt (model/ruler.ts)   what each ruler shows at time index k
@@ -116,6 +116,9 @@ parts without changing connectivity doesn't re-simulate.
 - **Document format:** `version: 1`. `isDoc()` in `doc.ts` validates loaded
   files and migrates older shapes in place (e.g. rulers with `top`/`bottom` →
   `path`, dropping zero-length wires). Keep old saved files loading.
+- **Probes** (`doc.probes`, `model/probes.ts`) are grid points resolved with
+  `netAt`, like ruler paths. They're one list for the whole document, plotted
+  as faint aux traces. `applyMove` carries them along with moved pins.
 - **Ruler spans and scale:**
   - A ruler is an ordered `path` of grid points, each resolved to a net with
     `netAt`.

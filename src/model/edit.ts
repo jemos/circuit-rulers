@@ -53,6 +53,7 @@ export function applyMove(d: Doc, ids: Set<string>, dx: number, dy: number) {
     }
     r.path = r.path.map((p) => remap.get(ptKey(p)) ?? p);
   }
+  d.probes = d.probes.map((p) => remap.get(ptKey(p)) ?? p);
   d.wires.push(...stretch);
   // A wire whose ends were both dragged onto the same point is gone; drop it.
   d.wires = d.wires.filter((w) => !isDegenerate(w));

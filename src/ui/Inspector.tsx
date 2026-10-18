@@ -383,6 +383,9 @@ function SimInspector({ doc, history, nl, sim }: { doc: Doc; history: DocHistory
           node, GND), then <kbd>Enter</kbd> or double-click the last one.
         </li>
         <li>
+          <kbd>T</kbd> probes a node: click it to add it to the plot as an extra, fainter trace, and again to remove it.
+        </li>
+        <li>
           Drag the time bar (or <kbd>Space</kbd> to play, <kbd>←</kbd> <kbd>→</kbd> to step). Live rulers follow it.
         </li>
         <li>

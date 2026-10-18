@@ -8,6 +8,7 @@ export function emptyDoc(): Doc {
     components: [],
     wires: [],
     rulers: [],
+    probes: [],
     sim: { stopTime: 10e-3, steps: 1000, start: 'dc', method: 'trap' },
     nextId: 1,
   };
@@ -94,6 +95,7 @@ export function isDoc(x: unknown): x is Doc {
     typeof d.sim?.stopTime === 'number' &&
     typeof d.nextId === 'number';
   if (ok) {
+    if (!Array.isArray(d.probes)) d.probes = [];
     // Older versions could leave zero-length wires behind after a drag.
     d.wires = d.wires.filter((w) => !isDegenerate(w));
     // Rulers used to be defined by a top and bottom point only.

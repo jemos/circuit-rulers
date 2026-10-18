@@ -27,6 +27,14 @@ describe('moving parts', () => {
     expect(nl.pinNets.get(cl.id)![1]).toBe(nl.nets.findIndex((n) => n.isGround));
   });
 
+  it('carries probes on a moved pin along', () => {
+    const b = new DocBuilder();
+    const r = b.add('resistor', 0, 0); // pins (0,-2), (0,2)
+    b.doc.probes = [{ x: 0, y: -2 }, { x: 5, y: 5 }];
+    applyMove(b.doc, new Set([r.id]), 3, 0);
+    expect(b.doc.probes).toEqual([{ x: 3, y: -2 }, { x: 5, y: 5 }]);
+  });
+
   it('cleans zero-length wires out of saved documents', () => {
     const b = new DocBuilder();
     b.wire([1, 1], [1, 1]);

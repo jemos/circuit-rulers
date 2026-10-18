@@ -63,6 +63,8 @@ export interface Doc {
   components: Component[];
   wires: Wire[];
   rulers: Ruler[];
+  /** Nodes plotted as auxiliary traces, as grid points like ruler paths. */
+  probes: Pt[];
   sim: SimSettings;
   nextId: number;
 }
