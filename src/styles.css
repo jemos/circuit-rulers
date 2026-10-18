@@ -405,6 +405,12 @@ kbd {
 .wire.hot line:not(.hit) {
   stroke-width: 3px;
 }
+.wire line.heat {
+  stroke-width: 2.5px;
+}
+.wire.hot line.heat {
+  stroke-width: 3.5px;
+}
 .junction {
   fill: var(--ink);
 }
@@ -635,6 +641,29 @@ kbd {
   color: var(--ink-2);
   pointer-events: none;
   white-space: nowrap;
+}
+.heat-legend {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 5px 10px;
+  color: var(--ink-2);
+  font-size: 12px;
+}
+.heat-legend .mono {
+  font-family: var(--mono);
+  color: var(--ink);
+}
+.heat-bar {
+  width: 90px;
+  height: 6px;
+  border-radius: 3px;
 }
 
 /* ---- time panel ----------------------------------------------------------- */

@@ -14,6 +14,7 @@ import { Symbol } from './Symbol';
 import type { DocHistory } from './useDocHistory';
 import { applyMove, isDegenerate, route } from '../model/edit';
 import { toggleProbe } from '../model/probes';
+import { maxSegmentCurrent, segmentCurrents, wireCurrents } from '../model/wireCurrents';
 
 export type Tool =
   | { type: 'select' }
@@ -52,6 +53,7 @@ interface Props {
   /** Colour of each probed net's trace in the plot. */
   probeColors: Map<number, string>;
   showCurrents: boolean;
+  showWireCurrents: boolean;
   showRegions: boolean;
   /** Tool-specific transient state, owned by the parent so Escape can clear it. */
   pending: Pt | null;
@@ -134,6 +136,20 @@ const ComponentView = memo(function ComponentView(props: { c: Component; selecte
   );
 });
 
+// Light silver at no current through warm orange to red at the run's largest.
+const HEAT: [number, number, number][] = [
+  [178, 182, 188],
+  [255, 190, 110],
+  [255, 59, 48],
+];
+function heatColor(t: number): string {
+  const x = Math.min(1, Math.max(0, t)) * (HEAT.length - 1);
+  const i = Math.min(HEAT.length - 2, Math.floor(x));
+  const f = x - i;
+  const [r, g, b] = HEAT[i].map((v, j) => Math.round(v + (HEAT[i + 1][j] - v) * f));
+  return `rgb(${r},${g},${b})`;
+}
+
 function Arrow({ at, dir, size }: { at: Pt; dir: Pt; size: number }) {
   const px = -dir.y;
   const py = dir.x;
@@ -145,7 +161,7 @@ function Arrow({ at, dir, size }: { at: Pt; dir: Pt; size: number }) {
 
 export function Canvas(props: Props) {
   const { history, nl, sim, k, selection, setSelection, tool, setTool, view, setView } = props;
-  const { hoverNet, setHoverNet, rulers, netColors, probeColors, showCurrents, showRegions, pending, setPending } = props;
+  const { hoverNet, setHoverNet, rulers, netColors, probeColors, showCurrents, showWireCurrents, showRegions, pending, setPending } = props;
   const { rulerPath, setRulerPath, finishRuler } = props;
   const doc = history.doc;
   const svgRef = useRef<SVGSVGElement>(null);
@@ -378,6 +394,26 @@ export function Canvas(props: Props) {
     return m;
   }, [sim]);
 
+  // Current through each wire segment, coloured on the same square-root scale as the arrows.
+  const wc = useMemo(
+    () => (showWireCurrents ? wireCurrents(doc, nl) : null),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [showWireCurrents, doc.components, doc.wires, nl],
+  );
+  const wireIMax = useMemo(() => (wc && sim ? maxSegmentCurrent(wc, sim) : 0), [wc, sim]);
+  const wireHeat = useMemo(() => {
+    const m = new Map<string, { a: Pt; b: Pt; color: string }[]>();
+    if (!wc || !sim || wireIMax <= 0) return m;
+    const cur = segmentCurrents(wc, sim, k);
+    wc.segments.forEach((s, i) => {
+      const t = Math.abs(cur[i]) < wireIMax * 1e-3 ? 0 : Math.sqrt(Math.abs(cur[i]) / wireIMax);
+      let list = m.get(s.wire);
+      if (!list) m.set(s.wire, (list = []));
+      list.push({ a: s.a, b: s.b, color: heatColor(t) });
+    });
+    return m;
+  }, [wc, sim, k, wireIMax]);
+
   const cursorSnap = snap(cursor);
   const cursorStyle = drag.current?.type === 'pan' ? 'grabbing' : tool.type === 'select' ? 'default' : 'crosshair';
 
@@ -422,10 +458,16 @@ export function Canvas(props: Props) {
               const net = nl.wireNets.get(w.id);
               const color = net !== undefined ? netColors.get(net) : undefined;
               const hot = net !== undefined && net === hoverNet;
+              const selected = selection.has(w.id);
+              const heat = selected ? undefined : wireHeat.get(w.id);
               return (
-                <g key={w.id} data-kind="wire" data-id={w.id} className={`wire${selection.has(w.id) ? ' selected' : ''}${hot ? ' hot' : ''}`}>
+                <g key={w.id} data-kind="wire" data-id={w.id} className={`wire${selected ? ' selected' : ''}${hot ? ' hot' : ''}`}>
                   <line className="hit" x1={w.a.x} y1={w.a.y} x2={w.b.x} y2={w.b.y} />
-                  <line x1={w.a.x} y1={w.a.y} x2={w.b.x} y2={w.b.y} style={color ? { stroke: color } : undefined} />
+                  {heat ? (
+                    heat.map((s, i) => <line key={i} className="heat" x1={s.a.x} y1={s.a.y} x2={s.b.x} y2={s.b.y} style={{ stroke: s.color }} />)
+                  ) : (
+                    <line x1={w.a.x} y1={w.a.y} x2={w.b.x} y2={w.b.y} style={color ? { stroke: color } : undefined} />
+                  )}
                 </g>
               );
             })}
@@ -553,6 +595,13 @@ export function Canvas(props: Props) {
               <span className="mono">{formatEng(netVoltage(nl, sim, hoverWireNet!, k), 'V')}</span>
             </div>
           )}
+        </div>
+      )}
+      {wireHeat.size > 0 && (
+        <div className="heat-legend" title="Wire colour: current magnitude, square-root scale, up to the largest in the run">
+          <span>0</span>
+          <span className="heat-bar" style={{ background: `linear-gradient(to right, ${[0, 0.25, 0.5, 0.75, 1].map(heatColor).join(', ')})` }} />
+          <span className="mono">{formatEng(wireIMax, 'A')}</span>
         </div>
       )}
       {(status || tool.type !== 'select') && (

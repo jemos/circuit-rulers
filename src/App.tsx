@@ -78,6 +78,7 @@ export default function App() {
   const [speed, setSpeed] = useState(1);
   const [hoverNet, setHoverNet] = useState<number | null>(null);
   const [showCurrents, setShowCurrents] = useState(true);
+  const [showWireCurrents, setShowWireCurrents] = useState(false);
   const [showRegions, setShowRegions] = useState(true);
   const [pending, setPending] = useState<Pt | null>(null);
   const [rulerPath, setRulerPath] = useState<Pt[]>([]);
@@ -501,6 +502,10 @@ export default function App() {
           <input type="checkbox" checked={showCurrents} onChange={(e) => setShowCurrents(e.target.checked)} />
           Current arrows
         </label>
+        <label className="toggle" title="Colour each wire by the current through it: silver for little, red for the most in the run">
+          <input type="checkbox" checked={showWireCurrents} onChange={(e) => setShowWireCurrents(e.target.checked)} />
+          Wire current
+        </label>
         <label className="toggle" title="Label each transistor with its operating region at the current time">
           <input type="checkbox" checked={showRegions} onChange={(e) => setShowRegions(e.target.checked)} />
           Transistor regions
@@ -579,6 +584,7 @@ export default function App() {
           netColors={netColors}
           probeColors={probeColors}
           showCurrents={showCurrents}
+          showWireCurrents={showWireCurrents}
           showRegions={showRegions}
           pending={pending}
           setPending={setPending}
