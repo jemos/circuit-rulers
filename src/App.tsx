@@ -96,7 +96,7 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [simKey]);
   const n = sim?.times.length ?? 0;
-  const kc = Math.min(k, Math.max(0, n - 1));
+  const kc = Math.max(0, Math.min(k, n - 1));
   const time = n ? sim!.times[kc] : 0;
   const setK = useCallback((v: number) => setKRaw(Math.max(0, Math.round(v))), []);
 
@@ -210,7 +210,8 @@ export default function App() {
     let last = performance.now();
     let raf = 0;
     const tick = (now: number) => {
-      pos.current += ((now - last) / 1000) * ((n - 1) / PLAY_SECONDS) * speed;
+      // A frame's timestamp can predate the performance.now() taken when playback started.
+      pos.current += (Math.max(0, now - last) / 1000) * ((n - 1) / PLAY_SECONDS) * speed;
       last = now;
       if (pos.current >= n - 1) {
         setKRaw(n - 1);
