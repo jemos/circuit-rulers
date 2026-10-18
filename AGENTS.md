@@ -149,7 +149,8 @@ parts without changing connectivity doesn't re-simulate.
 **Add an example:**
 
 1. Build it with `DocBuilder` in `model/examples.ts`. Check every pin
-   coordinate against `kinds.ts`.
+   coordinate against `kinds.ts`. Give it a `group` from `EXAMPLE_GROUPS`,
+   which sets its section in the menu; `rail()` draws a DC supply.
 2. Rulers are re-laid-out left to right when an example loads
    (`arrangeRulers`), so only the first ruler's x matters.
 3. The generic test in `model.test.ts` checks that every example simulates

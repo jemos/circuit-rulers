@@ -94,18 +94,38 @@ its **×** in the legend. Probes are saved with the circuit.
 
 ## Examples
 
-Load these from the **Examples** menu. Each comes with rulers already placed.
+Load these from the **Examples** menu, where they're grouped by kind. Each
+comes with rulers already placed.
 
 | Example | What to look at |
 | --- | --- |
+| **Basics** | |
 | Voltage divider | The ruler from the original sketch: R2 and R1 split Vdd in a fixed ratio. |
 | RC charging (default) | At the step all of Vin drops across R1, then moves onto C1. |
 | RLC ringing | The capacitor overshoots Vin while L1's voltage reverses. |
 | Half-wave rectifier | D1 conducts only near the peaks, and C1 holds the output up in between. |
+| **BJT stages** | |
 | Common-emitter amplifier | A small base wiggle swings the collector by about Rc/Re. |
-| Inverting op-amp | The − input stays at virtual ground, and the output clips at the rails. |
-| CMOS inverter | One transistor is off while the other is in triode. Mid-ramp, both conduct. |
+| Common emitter, bypassed Re | Same bias, but Ce shorts Re for the signal: gain ≈ Rc/re ≈ 250, already distorting at 10 mV. |
+| Common base | The emitter barely moves, so Rs carries all of Vin and its current goes to the collector. |
+| Emitter follower | Vbe stays near 0.7 V while the emitter current changes sevenfold. |
+| Current mirror | RL's drop holds still while Vsweep moves, until Q2 saturates at the dip. |
 | Differential amplifier | A long-tailed pair. The floating Vo1 → Vo2 output is on a zoomed scale. |
+| **MOSFET stages** | |
+| CMOS inverter | One transistor is off while the other is in triode. Mid-ramp, both conduct. |
+| Common source | Gain ≈ gm·RD, with the drain swinging further down than up (square law). |
+| Source follower | Unlike the emitter follower, Vgs grows visibly with the current. |
+| Common gate | The MOS common base: 1/gm is large, so the source moves with Vin. |
+| Cascode | M2 holds M1's drain near 2 V while the output swings by volts. |
+| CMOS differential pair | An NMOS pair with a PMOS mirror load and a single-ended output. |
+| **Output & multi-stage** | |
+| Loaded vs buffered stage | Two CE stages drive 1 kΩ, one directly and one through an emitter follower. |
+| Push-pull output stage | Class B: the output stalls while \|Vin\| < 0.6 V (crossover distortion). |
+| **Op-amp circuits** | |
+| Inverting op-amp | The − input stays at virtual ground, and the output clips at the rails. |
+| Non-inverting op-amp | V− tracks Vin, and Rf and Rg split Vout 2:1. |
+| Summing amplifier | The currents through R1 and R2 add at the virtual ground. |
+| Op-amp integrator | A square wave in becomes a triangle out as C1 charges at a constant current. |
 | High-side current sense | A tiny floating shunt drop near 12 V, amplified ×20 down to ground. |
 
 ## Simulator

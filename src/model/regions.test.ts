@@ -52,6 +52,26 @@ describe('regions in circuits', () => {
     expect(diff.first).toEqual({ Q1: 'active', Q2: 'active' });
   });
 
+  it('the single-stage examples keep their transistors in the amplifying region', () => {
+    for (const id of ['ce-bypass', 'cb', 'ef', 'two-stage', 'cs-amp', 'sf', 'cg', 'cascode', 'cmos-diff']) {
+      const r = regionsOf(example(id));
+      for (const k of [0, 125, 375, 700, 1500]) {
+        for (const [name, region] of Object.entries(r.at(k))) {
+          expect(region, `${id} ${name} at ${k}`).toBe(name.startsWith('M') ? 'saturation' : 'active');
+        }
+      }
+    }
+  });
+
+  it('the mirror saturates Q2 at the dip, and push-pull turns both off at a crossing', () => {
+    const mirror = regionsOf(example('mirror'));
+    expect(mirror.first).toEqual({ Q1: 'active', Q2: 'active' });
+    expect(mirror.at(600).Q2).toBe('saturation');
+    const pp = regionsOf(example('push-pull'));
+    expect(pp.first).toEqual({ Q1: 'cutoff', Q2: 'cutoff' });
+    expect(pp.at(250)).toEqual({ Q1: 'active', Q2: 'cutoff' });
+  });
+
   it('a hard-driven NPN switch saturates, and turns off with no base drive', () => {
     const b = new DocBuilder();
     b.add('vsource', 0, 4, {

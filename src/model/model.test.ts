@@ -270,4 +270,137 @@ describe('examples', () => {
     expect(bus[0] - load[0]).toBeCloseTo(0.05, 2);
     expect(bus[500] - load[500]).toBeCloseTo(0.15, 2); // t = 2.5 ms, sink fully on
   });
+
+  const swing = (s: ArrayLike<number>) => Math.max(...Array.from(s)) - Math.min(...Array.from(s));
+
+  it('bypassing Re multiplies the CE gain and holds the emitter still', () => {
+    const degenerated = swing(run('ce-amp').v('Vc')) / 1; // 1 V p-p in
+    const { v } = run('ce-bypass');
+    const vc = v('Vc');
+    expect(degenerated).toBeGreaterThan(3.5);
+    expect(degenerated).toBeLessThan(5);
+    expect(swing(vc) / 0.02).toBeGreaterThan(150); // 20 mV p-p in, gain ~ Rc/re
+    expect(swing(v('Ve'))).toBeLessThan(0.01);
+    // exponential Ic(Vbe): the collector swings further down than up
+    expect(vc[0] - Math.min(...vc)).toBeGreaterThan(Math.max(...vc) - vc[0] + 0.2);
+  });
+
+  it('common base: the emitter barely moves and the output follows Vin in phase', () => {
+    const { v } = run('cb');
+    expect(swing(v('Ve'))).toBeLessThan(0.03); // vs 0.6 V p-p at Vin
+    const gain = swing(v('Vout')) / 0.6;
+    expect(gain).toBeGreaterThan(3.5); // ~ Rc / (Rs + re)
+    expect(gain).toBeLessThan(4.7);
+    expect(v('Vout')[125] - v('Vout')[0]).toBeGreaterThan(1); // t = 0.25 ms, input peak
+  });
+
+  it('emitter follower stays one nearly constant Vbe below its input', () => {
+    const { v } = run('ef');
+    const vin = v('Vin');
+    const vout = v('Vout');
+    for (let k = 0; k < vin.length; k += 10) {
+      expect(vin[k] - vout[k]).toBeGreaterThan(0.6);
+      expect(vin[k] - vout[k]).toBeLessThan(0.75);
+    }
+  });
+
+  it('current mirror holds the load current until Q2 saturates', () => {
+    const { v } = run('mirror');
+    const sweep = v('Vsweep');
+    const out = v('Vout');
+    for (let k = 0; k < sweep.length; k += 10) {
+      if (sweep[k] > 3) expect(sweep[k] - out[k]).toBeCloseTo(1.97, 1); // ≈ Iref·β/(β+2) × 2 kΩ
+    }
+    expect(sweep[600] - out[600]).toBeLessThan(1.2); // t = 1.5 ms, Vsweep = 1 V
+  });
+
+  it('non-inverting amplifier has a gain of 1 + Rf/Rg', () => {
+    const { v } = run('noninverting');
+    const vin = v('Vin');
+    const vout = v('Vout');
+    for (const k of [0, 250, 500, 900]) {
+      expect(vout[k]).toBeCloseTo(3 * vin[k], 2);
+      expect(v('V−')[k]).toBeCloseTo(vin[k], 3); // virtual short
+    }
+  });
+
+  it('summing amplifier outputs minus the sum of its inputs', () => {
+    const { v } = run('summing');
+    const [a, b, out] = [v('Vin1'), v('Vin2'), v('Vout')];
+    for (const k of [0, 200, 400, 700, 1500]) expect(out[k]).toBeCloseTo(-(a[k] + b[k]), 2);
+  });
+
+  it('integrator turns the square wave into a triangle', () => {
+    const { v } = run('integrator');
+    const vout = v('Vout');
+    // Vin = +5 V from 0.5 ms to 1.5 ms: the output falls at Vin/(R1·C1) = 5 V/ms
+    expect(vout[125]).toBeCloseTo(2.5, 1);
+    expect(vout[250]).toBeCloseTo(0, 1);
+    expect(vout[375]).toBeCloseTo(-2.5, 1);
+    expect(vout[625]).toBeCloseTo(2.5, 1);
+  });
+
+  it('common source inverts with gain ~ gm·RD, squashed on the way up', () => {
+    const { v } = run('cs-amp');
+    const vout = v('Vout');
+    const gain = swing(vout) / 0.4;
+    expect(gain).toBeGreaterThan(8);
+    expect(gain).toBeLessThan(12);
+    expect(vout[125]).toBeLessThan(vout[0] - 1.5); // input peak pulls the drain down
+    expect(vout[0] - vout[125]).toBeGreaterThan(vout[375] - vout[0] + 0.2);
+  });
+
+  it('source follower needs more Vgs at higher current', () => {
+    const { v } = run('sf');
+    const vgs = (k: number) => v('Vin')[k] - v('Vout')[k];
+    expect(vgs(375)).toBeGreaterThan(1.2); // input trough
+    expect(vgs(125) - vgs(375)).toBeGreaterThan(0.5); // input peak
+    const gain = swing(v('Vout')) / 6;
+    expect(gain).toBeGreaterThan(0.8);
+    expect(gain).toBeLessThan(0.95);
+  });
+
+  it('common gate: the source moves with Vin far more than a BJT emitter does', () => {
+    const { v } = run('cg');
+    const frac = swing(v('Vs')) / 0.6;
+    expect(frac).toBeGreaterThan(0.3); // Rin = 1/gm ‖ RS ≈ 670 Ω against Rsig = 1 kΩ
+    expect(frac).toBeLessThan(0.5);
+    const gain = swing(v('Vout')) / 0.6;
+    expect(gain).toBeGreaterThan(3);
+    expect(gain).toBeLessThan(5);
+    expect(v('Vout')[125] - v('Vout')[0]).toBeGreaterThan(0.8);
+  });
+
+  it('cascode keeps M1’s drain nearly still while the output swings', () => {
+    const { v } = run('cascode');
+    expect(v('Vx')[0]).toBeCloseTo(2, 1);
+    expect(swing(v('Vout'))).toBeGreaterThan(2.5);
+    expect(swing(v('Vx')) / swing(v('Vout'))).toBeLessThan(0.15);
+  });
+
+  it('CMOS pair with mirror load amplifies the difference into one output', () => {
+    const { v } = run('cmos-diff');
+    const vout = v('Vout');
+    expect(swing(vout) / 0.01).toBeGreaterThan(100);
+    expect(vout[125] - vout[0]).toBeGreaterThan(0.5); // Vin+ peak raises the output
+  });
+
+  it('an emitter follower stops the load from eating the CE gain', () => {
+    const { v } = run('two-stage');
+    const loaded = swing(v('VoA'));
+    const buffered = swing(v('VoB'));
+    expect(loaded).toBeLessThan(1); // ≈ (Rc‖RL)/Re × 1 V p-p
+    expect(buffered).toBeGreaterThan(3.5);
+  });
+
+  it('push-pull output stalls while neither transistor conducts', () => {
+    const { v } = run('push-pull');
+    const vin = v('Vin');
+    const vout = v('Vout');
+    for (let k = 0; k < vin.length; k++) {
+      if (Math.abs(vin[k]) < 0.45) expect(Math.abs(vout[k])).toBeLessThan(0.01);
+    }
+    expect(vin[250] - vout[250]).toBeGreaterThan(0.6); // t = 0.5 ms, input peak
+    expect(vin[250] - vout[250]).toBeLessThan(0.8);
+  });
 });

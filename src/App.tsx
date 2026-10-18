@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { isDoc, nextRulerName } from './model/doc';
-import { EXAMPLES } from './model/examples';
+import { EXAMPLE_GROUPS, EXAMPLES } from './model/examples';
 import { componentBounds, rotateCW } from './model/geometry';
 import { KINDS, PALETTE } from './model/kinds';
 import { buildNetlist } from './model/netlist';
@@ -462,10 +462,14 @@ export default function App() {
           <option value="" disabled>
             Examples…
           </option>
-          {EXAMPLES.map((ex) => (
-            <option key={ex.id} value={ex.id} title={ex.blurb}>
-              {ex.title}
-            </option>
+          {EXAMPLE_GROUPS.map((group) => (
+            <optgroup key={group} label={group}>
+              {EXAMPLES.filter((ex) => ex.group === group).map((ex) => (
+                <option key={ex.id} value={ex.id} title={ex.blurb}>
+                  {ex.title}
+                </option>
+              ))}
+            </optgroup>
           ))}
         </select>
         <button
