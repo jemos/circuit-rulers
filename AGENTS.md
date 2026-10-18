@@ -82,6 +82,12 @@ Doc (model/types.ts)                 the saved document: components, wires, rule
   - `useDocHistory.ts` provides undo/redo, and `Inspector.tsx`,
     `TimePanel.tsx` and `RulerView.tsx` cover the panels and rulers.
   - `About.tsx` is the About dialog, opened from the top bar.
+- **`public/docs/`** is the user documentation: hand-written static HTML pages
+  sharing `docs.css`, copied as-is into `dist/docs/`. Links are relative and
+  extensionless (`rulers`, not `rulers.html`). Cloudflare's asset serving
+  resolves them, and a small middleware in `vite.config.ts` does the same in dev.
+  The sidebar nav is repeated in every page, so update all of them when adding
+  a page.
 - **`src/App.tsx`** owns UI state (tool, selection, view, time index, playback),
   derived data (netlist, sim, ruler layouts), keyboard shortcuts and file I/O.
 
@@ -195,5 +201,10 @@ Google Chrome, then inspecting screenshots and DOM state.
   - `g.comp .hit` for parts, `rect.ruler-frame` for rulers, `.inspector` for
     the side panel.
 - Clear `localStorage` before each run, because the app autosaves.
+- The screenshots and clips in `public/docs/media/` were made this way, at a
+  1440×900 viewport. Stills are 2× WebP; clips are CDP screencast frames
+  encoded as animated WebP with Pillow (there's no ffmpeg). Headless captures
+  show no pointer, so the clips use an injected fake cursor. Recapture the
+  affected media when the UI changes visibly.
 - The left toolbar and bottom panel cover parts of the canvas. Pan, or pick
   grid points that land inside the visible canvas.

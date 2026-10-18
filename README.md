@@ -1,7 +1,8 @@
 # Circuit Rulers
 
 An interactive schematic editor for building intuition about analog circuits.
-Try it at **[circuits.jemos.net](https://circuits.jemos.net)**.
+Try it at **[circuits.jemos.net](https://circuits.jemos.net)**, and see the
+**[docs](https://circuits.jemos.net/docs/)** for two tutorials and a guide to each feature.
 
 Draw a circuit, scrub through time, and place **voltage rulers** next to the
 schematic. You build a ruler by clicking a path of nodes (e.g. Vdd → middle →
@@ -158,6 +159,7 @@ src/sim/      solver: device models and stamps, LU solve, transient analysis
 src/model/    schematic data, netlist extraction, rulers, regions, edits, examples
 src/ui/       React components: canvas, symbols, rulers, inspector, time panel
 src/App.tsx   app state, keyboard shortcuts, file I/O, playback
+public/docs/  static documentation pages, served at /docs
 ```
 
 See [AGENTS.md](AGENTS.md) for architecture notes and conventions when working

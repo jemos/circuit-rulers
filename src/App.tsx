@@ -526,6 +526,9 @@ export default function App() {
               ? `${n - 1} steps of ${formatEng(doc.sim.stopTime / doc.sim.steps, 's')} · ${simMs.toFixed(0)} ms`
               : 'Empty circuit'}
         </span>
+        <a className="button-link" href="/docs/" target="_blank" rel="noreferrer" title="Tutorials and feature guides (opens a new tab)">
+          Docs
+        </a>
         <button onClick={() => setShowAbout(true)}>About</button>
       </header>
 

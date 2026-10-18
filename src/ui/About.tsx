@@ -60,6 +60,10 @@ export function About({ onClose }: { onClose: () => void }) {
             ).
           </span>
           <span>
+            <a href="/docs/" target="_blank" rel="noreferrer">
+              Documentation
+            </a>{' '}
+            ·{' '}
             <a href={REPO_URL} target="_blank" rel="noreferrer">
               Source on GitHub
             </a>{' '}

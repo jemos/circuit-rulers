@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Drawing circuits · Circuit Rulers docs</title>
+    <meta name="description" content="Placing parts, drawing wires, net labels, editing values, keyboard shortcuts and saving circuits in Circuit Rulers." />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 20 20%27%3E%3Cpath d=%27M6 3h4M8 3v14M6 17h4M14 3v14M12 9h4%27 stroke=%27%237cc7ff%27 stroke-width=%271.8%27 fill=%27none%27/%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="docs.css" />
+  </head>
+  <body>
+    <header class="top">
+      <a class="brand" href="./">
+        <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M6 3h4M8 3v14M6 17h4M14 3v14M12 9h4" stroke="currentColor" stroke-width="1.6" fill="none" /></svg>
+        Circuit Rulers <span>docs</span>
+      </a>
+      <a class="open-app" href="/">Open the app →</a>
+    </header>
+    <div class="layout">
+      <nav class="side" aria-label="Documentation">
+        <p>Start</p>
+        <a href="./">Overview</a>
+        <p>Tutorials</p>
+        <a href="tutorial-rc">1 · An RC circuit</a>
+        <a href="tutorial-transistor">2 · A transistor amplifier</a>
+        <p>Features</p>
+        <a href="editor" aria-current="page">Drawing circuits</a>
+        <a href="rulers">Voltage rulers</a>
+        <a href="time">Time and the plot</a>
+        <a href="currents-regions">Currents and regions</a>
+        <a href="simulator">Simulator and models</a>
+        <a href="examples">Examples</a>
+      </nav>
+      <main class="doc">
+        <p class="eyebrow">Features</p>
+        <h1>Drawing circuits</h1>
+        <p class="lede">The schematic editor: parts, wires, net labels, editing values, and keeping your work.</p>
+
+        <h2 id="layout">The screen</h2>
+        <figure>
+          <img src="media/f-app-still.webp" width="1800" height="1125" alt="The app layout: top bar, left toolbar, canvas with circuit and rulers, inspector on the right, time panel at the bottom." loading="lazy" />
+        </figure>
+        <ul>
+          <li><strong>Top bar:</strong> the Examples menu, New, Open, Save, Undo, Redo and Fit, plus the display toggles (current arrows, wire current, transistor regions). On the right is the simulation status: the number of steps, the step size and how long the run took to compute.</li>
+          <li><strong>Toolbar</strong> (left): the select, wire, ruler and probe tools, then one button per part.</li>
+          <li><strong>Canvas:</strong> the schematic and its rulers. A hint at the top says what the active tool expects next.</li>
+          <li><strong>Inspector</strong> (right): whatever is selected. With nothing selected, it shows the simulation settings and a short how-to.</li>
+          <li><strong>Time panel</strong> (bottom): the plot, the scrubber and playback. See <a href="time">Time and the plot</a>.</li>
+        </ul>
+
+        <h2 id="parts">Parts</h2>
+        <p>
+          Pick a part in the toolbar and click the canvas to place it. The tool stays active for placing more. Press
+          <kbd>R</kbd> to rotate and <kbd>F</kbd> to flip the part before you click. <kbd>Esc</kbd> or a right-click goes
+          back to the select tool. Each part gets the next free name (R1, R2, …) and a default value.
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Part</th><th>Pins</th><th>Settings</th></tr></thead>
+            <tbody>
+              <tr><td>Resistor</td><td>+, −</td><td>Resistance</td></tr>
+              <tr><td>Capacitor</td><td>+, −</td><td>Capacitance, initial voltage</td></tr>
+              <tr><td>Inductor</td><td>+, −</td><td>Inductance, initial current</td></tr>
+              <tr><td>Voltage source</td><td>+, −</td><td>Waveform: DC, step, pulse or sine (see <a href="time#sources">sources</a>)</td></tr>
+              <tr><td>Current source</td><td>+, −</td><td>Waveform; pushes current out of its + pin</td></tr>
+              <tr><td>Diode</td><td>A, K</td><td>Saturation current, emission coefficient</td></tr>
+              <tr><td>NPN, PNP</td><td>C, B, E</td><td>β forward, β reverse, saturation current</td></tr>
+              <tr><td>NMOS, PMOS</td><td>D, G, S</td><td>|V<sub>th</sub>|, β = k′·W/L, λ</td></tr>
+              <tr><td>Op-amp</td><td>−, +, out</td><td>Open-loop gain, positive and negative rails</td></tr>
+              <tr><td>Ground</td><td>one</td><td>The 0 V reference</td></tr>
+              <tr><td>Net label</td><td>one</td><td>A net name</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>The <a href="simulator#models">simulator page</a> describes the device models behind these settings.</p>
+
+        <h2 id="wires">Wires and connections</h2>
+        <p>
+          Press <kbd>W</kbd>. Click to start a wire and click once at each corner. Clicking a pin or another wire
+          finishes it. To stop anywhere else, double-click, press <kbd>Esc</kbd> or right-click.
+        </p>
+        <p>Connections come from <strong>position</strong>, as in LTspice:</p>
+        <ul>
+          <li>A pin and a wire end on the same grid point are connected.</li>
+          <li>A wire end or a pin lying on the middle of another wire makes a T-junction, drawn with a dot.</li>
+          <li>Two wires that only cross are <em>not</em> connected.</li>
+        </ul>
+
+        <h2 id="labels">Net labels and node names</h2>
+        <p>
+          A net label names the node it touches. <strong>Labels with the same name are one node</strong>, so three
+          <code>Vcc</code> labels connect without any wire between them. A label named <code>GND</code> joins ground.
+          Nodes without a label are named N1, N2, …, and the ground node is GND. These names appear on rulers, in the
+          plot legend and in tooltips.
+        </p>
+        <p class="dim">Without a ground symbol the inspector warns you: voltages are then measured against an arbitrary reference.</p>
+
+        <h2 id="select">Selecting, moving, rotating</h2>
+        <ul>
+          <li>Click to select a part, wire or ruler. <kbd>⇧</kbd>-click adds to the selection, dragging on empty canvas draws a selection box, and <kbd>⌘</kbd><kbd>A</kbd> selects everything.</li>
+          <li>Drag a selection to move it. Wires attached to a moved part stretch to follow it. If a pin was touching another pin directly, a new wire is added so the connection survives.</li>
+          <li><kbd>R</kbd> and <kbd>F</kbd> rotate and flip the selected parts. <strong>Wires don't move</strong> when you rotate. Since connectivity is by position, check the connections after rotating a part that's already wired.</li>
+          <li><kbd>⌫</kbd> or <kbd>Delete</kbd> removes the selection, and so does the Delete button in the inspector.</li>
+        </ul>
+
+        <h2 id="values">Editing values</h2>
+        <p>
+          Select a part to edit its name and values in the inspector. A value commits when you press <kbd>Enter</kbd> or
+          click elsewhere, and <kbd>Esc</kbd> abandons the edit. An invalid value turns the field red and isn't applied.
+          Values use engineering notation, with an optional unit after the prefix: <code>4.7k</code>,
+          <code>10uF</code>, <code>1meg</code>, <code>-2.5</code>, <code>1e-6</code>.
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Prefix</th><th>Factor</th><th>Prefix</th><th>Factor</th></tr></thead>
+            <tbody>
+              <tr><td><code>f</code></td><td>10<sup>−15</sup></td><td><code>k</code> or <code>K</code></td><td>10<sup>3</sup></td></tr>
+              <tr><td><code>p</code></td><td>10<sup>−12</sup></td><td><code>M</code>, <code>meg</code>, <code>Meg</code>, <code>MEG</code></td><td>10<sup>6</sup></td></tr>
+              <tr><td><code>n</code></td><td>10<sup>−9</sup></td><td><code>G</code></td><td>10<sup>9</sup></td></tr>
+              <tr><td><code>u</code> or <code>µ</code></td><td>10<sup>−6</sup></td><td><code>T</code></td><td>10<sup>12</sup></td></tr>
+              <tr><td><code>m</code></td><td>10<sup>−3</sup></td><td></td><td></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note">
+          <p>
+            Prefixes are <strong>case-sensitive</strong>, unlike SPICE: <code>m</code> is milli and <code>M</code> is
+            mega. A unit letter on its own is just a unit, so <code>1F</code> is one farad, not one femto.
+          </p>
+        </div>
+
+        <h2 id="view">Moving around</h2>
+        <ul>
+          <li>Scroll to pan. Middle-drag also pans.</li>
+          <li>Pinch, or <kbd>⌘</kbd>/<kbd>Ctrl</kbd> + scroll, to zoom.</li>
+          <li><strong>Fit</strong> in the top bar frames the whole circuit and its rulers.</li>
+        </ul>
+
+        <h2 id="files">Saving and opening</h2>
+        <ul>
+          <li>The circuit <strong>autosaves</strong> to this browser's local storage, so a reload brings it back.</li>
+          <li><strong>Save</strong> downloads <code>circuit.json</code>, with the parts, wires, rulers, probes and simulation settings. <strong>Open</strong> loads such a file.</li>
+          <li><strong>New</strong> clears the canvas but keeps the simulation settings.</li>
+          <li>The <strong>Examples</strong> menu loads a ready-made circuit with rulers placed. It replaces the current circuit, which <kbd>⌘</kbd><kbd>Z</kbd> brings back. See <a href="examples">Examples</a>.</li>
+          <li><strong>Undo</strong> and <strong>Redo</strong> cover every edit. A drag counts as one step.</li>
+        </ul>
+
+        <h2 id="shortcuts">Keyboard shortcuts</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Keys</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td><kbd>V</kbd> or <kbd>S</kbd></td><td>Select tool</td></tr>
+              <tr><td><kbd>W</kbd></td><td>Wire tool</td></tr>
+              <tr><td><kbd>U</kbd></td><td>Voltage ruler tool</td></tr>
+              <tr><td><kbd>T</kbd></td><td>Probe tool (add or remove a plot trace)</td></tr>
+              <tr><td><kbd>R</kbd> / <kbd>F</kbd></td><td>Rotate / flip the part being placed, or the selected parts</td></tr>
+              <tr><td><kbd>Enter</kbd></td><td>Finish the ruler path</td></tr>
+              <tr><td><kbd>⌫</kbd> / <kbd>Delete</kbd></td><td>Delete the selection, or undo the last ruler click while picking a path</td></tr>
+              <tr><td><kbd>Esc</kbd></td><td>Stop the wire, cancel the ruler path, leave the tool, then clear the selection</td></tr>
+              <tr><td><kbd>P</kbd></td><td>Snapshot the selected ruler (or the first live one) at the current time</td></tr>
+              <tr><td><kbd>Space</kbd></td><td>Play / pause</td></tr>
+              <tr><td><kbd>←</kbd> <kbd>→</kbd></td><td>Step one time point (<kbd>⇧</kbd>: ten)</td></tr>
+              <tr><td><kbd>Home</kbd> / <kbd>End</kbd></td><td>Jump to the start / end of the run</td></tr>
+              <tr><td><kbd>⌘</kbd><kbd>Z</kbd></td><td>Undo</td></tr>
+              <tr><td><kbd>⇧</kbd><kbd>⌘</kbd><kbd>Z</kbd> or <kbd>⌘</kbd><kbd>Y</kbd></td><td>Redo</td></tr>
+              <tr><td><kbd>⌘</kbd><kbd>A</kbd></td><td>Select all</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="dim">On Windows and Linux, use <kbd>Ctrl</kbd> for <kbd>⌘</kbd>. Shortcuts are ignored while you're typing in a field.</p>
+
+        <div class="pager">
+          <a href="tutorial-transistor"><span>Previous</span>← Tutorial 2 · A transistor amplifier</a>
+          <a class="next" href="rulers"><span>Next</span>Voltage rulers →</a>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

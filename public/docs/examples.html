@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Examples · Circuit Rulers docs</title>
+    <meta name="description" content="The 23 built-in Circuit Rulers examples, from a voltage divider to op-amp circuits, and what to look at in each." />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 20 20%27%3E%3Cpath d=%27M6 3h4M8 3v14M6 17h4M14 3v14M12 9h4%27 stroke=%27%237cc7ff%27 stroke-width=%271.8%27 fill=%27none%27/%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="docs.css" />
+  </head>
+  <body>
+    <header class="top">
+      <a class="brand" href="./">
+        <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M6 3h4M8 3v14M6 17h4M14 3v14M12 9h4" stroke="currentColor" stroke-width="1.6" fill="none" /></svg>
+        Circuit Rulers <span>docs</span>
+      </a>
+      <a class="open-app" href="/">Open the app →</a>
+    </header>
+    <div class="layout">
+      <nav class="side" aria-label="Documentation">
+        <p>Start</p>
+        <a href="./">Overview</a>
+        <p>Tutorials</p>
+        <a href="tutorial-rc">1 · An RC circuit</a>
+        <a href="tutorial-transistor">2 · A transistor amplifier</a>
+        <p>Features</p>
+        <a href="editor">Drawing circuits</a>
+        <a href="rulers">Voltage rulers</a>
+        <a href="time">Time and the plot</a>
+        <a href="currents-regions">Currents and regions</a>
+        <a href="simulator">Simulator and models</a>
+        <a href="examples" aria-current="page">Examples</a>
+      </nav>
+      <main class="doc">
+        <p class="eyebrow">Features</p>
+        <h1>Examples</h1>
+        <p class="lede">
+          Load these from the <strong>Examples</strong> menu in the top bar. Each one comes with rulers already placed,
+          usually a pinned one beside a live one. Loading an example replaces the current circuit, and
+          <kbd>⌘</kbd><kbd>Z</kbd> brings yours back.
+        </p>
+
+        <h2 id="basics">Basics</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Example</th><th>What to look at</th></tr></thead>
+            <tbody>
+              <tr><td>Voltage divider</td><td>The ruler from the original sketch: R2 and R1 split Vdd in a fixed ratio.</td></tr>
+              <tr><td>RC charging</td><td>The default circuit. At the step all of Vin drops across R1, then moves onto C1.</td></tr>
+              <tr><td>RLC ringing</td><td>The capacitor overshoots Vin while L1's voltage reverses.</td></tr>
+              <tr><td>Half-wave rectifier</td><td>D1 conducts only near the peaks, and C1 holds the output up in between.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2 id="bjt">BJT stages</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Example</th><th>What to look at</th></tr></thead>
+            <tbody>
+              <tr><td>Common-emitter amplifier</td><td>A small base wiggle swings the collector by about Rc/Re. Built step by step in <a href="tutorial-transistor">tutorial 2</a>.</td></tr>
+              <tr><td>Common emitter, bypassed Re</td><td>Same bias, but Ce shorts Re for the signal: gain ≈ Rc/r<sub>e</sub> ≈ 250, already distorting at 10 mV.</td></tr>
+              <tr><td>Common base</td><td>The emitter barely moves, so Rs carries all of Vin and its current goes to the collector.</td></tr>
+              <tr><td>Emitter follower</td><td>V<sub>BE</sub> stays near 0.7 V while the emitter current changes sevenfold.</td></tr>
+              <tr><td>Current mirror</td><td>RL's drop holds still while Vsweep moves, until Q2 saturates at the dip.</td></tr>
+              <tr><td>Differential amplifier</td><td>A long-tailed pair. The floating Vo1 → Vo2 output is on a zoomed scale.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2 id="mos">MOSFET stages</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Example</th><th>What to look at</th></tr></thead>
+            <tbody>
+              <tr><td>CMOS inverter</td><td>One transistor is off while the other is in triode. Mid-ramp, both conduct.</td></tr>
+              <tr><td>Common source</td><td>Gain ≈ g<sub>m</sub>·R<sub>D</sub>, with the drain swinging further down than up (square law).</td></tr>
+              <tr><td>Source follower</td><td>Unlike the emitter follower, V<sub>GS</sub> grows visibly with the current.</td></tr>
+              <tr><td>Common gate</td><td>The MOS common base: 1/g<sub>m</sub> is large, so the source moves with Vin.</td></tr>
+              <tr><td>Cascode</td><td>M2 holds M1's drain near 2 V while the output swings by volts.</td></tr>
+              <tr><td>CMOS differential pair</td><td>An NMOS pair with a PMOS mirror load and a single-ended output.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2 id="output">Output and multi-stage</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Example</th><th>What to look at</th></tr></thead>
+            <tbody>
+              <tr><td>Loaded vs buffered stage</td><td>Two CE stages drive 1 kΩ, one directly and one through an emitter follower.</td></tr>
+              <tr><td>Push-pull output stage</td><td>Class B: the output stalls while |Vin| &lt; 0.6 V (crossover distortion).</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2 id="opamp">Op-amp circuits</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Example</th><th>What to look at</th></tr></thead>
+            <tbody>
+              <tr><td>Inverting op-amp</td><td>The − input stays at virtual ground, and the output clips at the rails.</td></tr>
+              <tr><td>Non-inverting op-amp</td><td>V− tracks Vin, and Rf and Rg split Vout 2:1.</td></tr>
+              <tr><td>Summing amplifier</td><td>The currents through R1 and R2 add at the virtual ground.</td></tr>
+              <tr><td>Op-amp integrator</td><td>A square wave in becomes a triangle out as C1 charges at a constant current.</td></tr>
+              <tr><td>High-side current sense</td><td>A tiny floating shunt drop near 12 V, amplified ×20 down to ground.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note">
+          <p>
+            A good habit with any example: play it once, then select each ruler and read its path in the inspector to
+            see which nodes it measures. Then change one value and watch what moves.
+          </p>
+        </div>
+
+        <div class="pager">
+          <a href="simulator"><span>Previous</span>← Simulator and models</a>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

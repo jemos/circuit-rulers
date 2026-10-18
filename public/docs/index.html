@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Circuit Rulers docs</title>
+    <meta name="description" content="How to use Circuit Rulers: tutorials and feature guides for the browser-based analog circuit simulator with voltage rulers." />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 20 20%27%3E%3Cpath d=%27M6 3h4M8 3v14M6 17h4M14 3v14M12 9h4%27 stroke=%27%237cc7ff%27 stroke-width=%271.8%27 fill=%27none%27/%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="docs.css" />
+  </head>
+  <body>
+    <header class="top">
+      <a class="brand" href="./">
+        <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M6 3h4M8 3v14M6 17h4M14 3v14M12 9h4" stroke="currentColor" stroke-width="1.6" fill="none" /></svg>
+        Circuit Rulers <span>docs</span>
+      </a>
+      <a class="open-app" href="/">Open the app →</a>
+    </header>
+    <div class="layout">
+      <nav class="side" aria-label="Documentation">
+        <p>Start</p>
+        <a href="./" aria-current="page">Overview</a>
+        <p>Tutorials</p>
+        <a href="tutorial-rc">1 · An RC circuit</a>
+        <a href="tutorial-transistor">2 · A transistor amplifier</a>
+        <p>Features</p>
+        <a href="editor">Drawing circuits</a>
+        <a href="rulers">Voltage rulers</a>
+        <a href="time">Time and the plot</a>
+        <a href="currents-regions">Currents and regions</a>
+        <a href="simulator">Simulator and models</a>
+        <a href="examples">Examples</a>
+      </nav>
+      <main class="doc">
+        <h1>Circuit Rulers</h1>
+        <p class="lede">
+          An interactive schematic editor for building intuition about how analog circuits behave over time. Draw a
+          circuit, scrub through its simulation, and read every node voltage off a <strong>voltage ruler</strong> drawn
+          beside the schematic.
+        </p>
+
+        <figure>
+          <img src="media/f-app-still.webp" width="1800" height="1125" alt="The Circuit Rulers app: an RC circuit on the left, two voltage rulers in the middle, the inspector on the right and the time plot along the bottom." />
+          <figcaption>
+            The default circuit. Ruler 1 is pinned at 1.5 ms. Ruler 2 is live and follows the time scrubber, so you can
+            watch the voltage move from R1 onto C1.
+          </figcaption>
+        </figure>
+
+        <h2>The idea</h2>
+        <p>
+          A ruler follows a path of nodes you click, for example V<sub>dd</sub> → middle → GND. Its spine has a tick at
+          each node, placed at that node's voltage on a scale shared by the whole circuit. A bracket beside the spine
+          shows the voltage across each step of the path, labelled with the part it crosses (V<sub>R1</sub>,
+          V<sub>Q1 CE</sub>, …).
+        </p>
+        <p>
+          A <strong>live</strong> ruler follows the time scrubber. A <strong>pinned</strong> ruler stays at one moment.
+          Put the two side by side and you can see how the voltages shift as the circuit runs.
+        </p>
+        <p>
+          Everything runs in your browser: a small SPICE-like simulator, the editor and the drawing. There is no backend,
+          and your circuit is saved to this browser's local storage.
+        </p>
+
+        <h2>Start with a tutorial</h2>
+        <div class="cards">
+          <a class="card" href="tutorial-rc">
+            <img src="media/t1-final-still.webp" alt="" loading="lazy" />
+            <div>
+              <strong>1 · Your first circuit</strong>
+              <span>Build an RC circuit from scratch, add a ruler, scrub through time and pin a snapshot. About 5 minutes.</span>
+            </div>
+          </a>
+          <a class="card" href="tutorial-transistor">
+            <img src="media/t2-sat-still.webp" alt="" loading="lazy" />
+            <div>
+              <strong>2 · A transistor amplifier</strong>
+              <span>Build a common-emitter stage, then use regions, probes, wire currents, zoomed rulers and overdrive. About 15 minutes.</span>
+            </div>
+          </a>
+        </div>
+
+        <h2>Features</h2>
+        <ul class="feature-list">
+          <li><a href="editor">Drawing circuits</a><span>Parts, wires, net labels, editing values, shortcuts and files.</span></li>
+          <li><a href="rulers">Voltage rulers</a><span>Paths, step brackets, scales, and live and pinned rulers.</span></li>
+          <li><a href="time">Time and the plot</a><span>Simulation settings, playback, sources, the plot and probes.</span></li>
+          <li><a href="currents-regions">Currents and regions</a><span>Current arrows, wire heat, readouts and transistor operating regions.</span></li>
+          <li><a href="simulator">Simulator and models</a><span>How the solver works, the device models and their limits.</span></li>
+          <li><a href="examples">Examples</a><span>23 built-in circuits, from a divider to a current-sense amplifier.</span></li>
+        </ul>
+
+        <div class="pager">
+          <a class="next" href="tutorial-rc"><span>Next</span>Tutorial 1 · An RC circuit →</a>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tutorial 1: An RC circuit · Circuit Rulers docs</title>
+    <meta name="description" content="Build an RC charging circuit from scratch in Circuit Rulers, add a voltage ruler, scrub through time and compare a pinned snapshot with a live ruler." />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 20 20%27%3E%3Cpath d=%27M6 3h4M8 3v14M6 17h4M14 3v14M12 9h4%27 stroke=%27%237cc7ff%27 stroke-width=%271.8%27 fill=%27none%27/%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="docs.css" />
+  </head>
+  <body>
+    <header class="top">
+      <a class="brand" href="./">
+        <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M6 3h4M8 3v14M6 17h4M14 3v14M12 9h4" stroke="currentColor" stroke-width="1.6" fill="none" /></svg>
+        Circuit Rulers <span>docs</span>
+      </a>
+      <a class="open-app" href="/">Open the app →</a>
+    </header>
+    <div class="layout">
+      <nav class="side" aria-label="Documentation">
+        <p>Start</p>
+        <a href="./">Overview</a>
+        <p>Tutorials</p>
+        <a href="tutorial-rc" aria-current="page">1 · An RC circuit</a>
+        <a href="tutorial-transistor">2 · A transistor amplifier</a>
+        <p>Features</p>
+        <a href="editor">Drawing circuits</a>
+        <a href="rulers">Voltage rulers</a>
+        <a href="time">Time and the plot</a>
+        <a href="currents-regions">Currents and regions</a>
+        <a href="simulator">Simulator and models</a>
+        <a href="examples">Examples</a>
+      </nav>
+      <main class="doc">
+        <p class="eyebrow">Tutorial 1</p>
+        <h1>Your first circuit: an RC charging curve</h1>
+        <p class="lede">
+          Build a resistor and capacitor driven by a 5 V step, put a voltage ruler next to it, and watch the voltage move
+          from the resistor onto the capacitor as it charges.
+        </p>
+        <div class="meta">
+          <span>About 5 minutes</span>
+          <span>You'll use: placing parts, wires, net labels, a ruler, the scrubber, snapshots</span>
+        </div>
+
+        <p>
+          Open <a href="/">the app</a> in another tab. The clips below play at real speed. In them, a blue ring marks
+          each click and the keys pressed appear as badges.
+        </p>
+
+        <h2 id="new"><span class="step"><span class="n">1</span>Start an empty circuit</span></h2>
+        <p>
+          Click <strong>New</strong> in the top bar. The canvas clears, but the simulation settings are kept. With
+          nothing selected, the inspector on the right shows them. Check that <strong>Duration</strong> is
+          <code>6ms</code> and <strong>Time steps</strong> is <code>1200</code>, which are the defaults. If you came from
+          another example, type those values in.
+        </p>
+
+        <h2 id="place"><span class="step"><span class="n">2</span>Place the parts</span></h2>
+        <p>
+          Pick a part in the left toolbar, then click on the canvas to drop it. Parts snap to the grid, and the tool stays
+          active so you can place several. Press <kbd>Esc</kbd> to go back to the select tool.
+        </p>
+        <ul>
+          <li>a <strong>voltage source</strong> on the left,</li>
+          <li>a <strong>resistor</strong> and, below it, a <strong>capacitor</strong> on the right,</li>
+          <li>two <strong>grounds</strong>, one under the source and one under the capacitor.</li>
+        </ul>
+        <figure class="narrow">
+          <img src="media/t1-place.webp" width="792" height="620" alt="Clip: picking the voltage source, resistor, capacitor and ground tools and clicking to place each part." loading="lazy" />
+          <figcaption><span class="tag">clip</span>Parts get names (V1, R1, C1) and default values (5 V, 1 kΩ, 1 µF) as they're placed.</figcaption>
+        </figure>
+
+        <h2 id="wire"><span class="step"><span class="n">3</span>Wire it up</span></h2>
+        <p>
+          Press <kbd>W</kbd> for the wire tool. Click where a wire starts, click once at each corner, and finish on a pin
+          or another wire. The wire ends there on its own. Wires only join at their ends and at pins: where a wire ends on
+          another wire, a dot shows the junction.
+        </p>
+        <p>
+          Wire the source's + pin up and across to the top of R1, R1 down to C1, and each ground to the part above it.
+          Then add one short wire from the middle node out to the right. You'll put a label at its end.
+        </p>
+        <figure class="narrow">
+          <img src="media/t1-wire.webp" width="807" height="591" alt="Clip: drawing wires between the source, resistor, capacitor and grounds with the wire tool." loading="lazy" />
+          <figcaption>
+            <span class="tag">clip</span>The orange arrows appear as soon as the circuit is complete: the simulator is
+            already running, and they show the direction of the current through each part.
+          </figcaption>
+        </figure>
+
+        <h2 id="labels"><span class="step"><span class="n">4</span>Name the nodes and make the source a step</span></h2>
+        <p>
+          Unnamed nodes are called N1, N2, … To give them better names, pick the <strong>Net label</strong> tool (the last
+          one in the toolbar) and click on the top wire and on the end of the stub. Select each label and type a
+          <strong>Net name</strong> in the inspector: <code>Vin</code> for the top wire and <code>Vc</code> for the
+          stub.
+        </p>
+        <p>
+          Now click V1 to select it and change its <strong>Waveform</strong> from DC to <strong>Step</strong>. The
+          defaults are what we want: 0 V until 1 ms, then 5 V.
+        </p>
+        <figure>
+          <img src="media/t1-labels.webp" width="1100" height="477" alt="Clip: placing two net labels, naming them Vin and Vc in the inspector, then switching V1's waveform to Step." loading="lazy" />
+          <figcaption><span class="tag">clip</span>Values commit when you press <kbd>Enter</kbd> or click elsewhere.</figcaption>
+        </figure>
+        <figure class="narrow">
+          <img src="media/t1-step-still.webp" width="280" height="410" alt="The inspector for V1 showing a Step waveform: Initial 0 V, Final 5 V, Step at 1 ms, Rise time 0 s." loading="lazy" />
+          <figcaption>V1 in the inspector after the change.</figcaption>
+        </figure>
+
+        <h2 id="ruler"><span class="step"><span class="n">5</span>Add a voltage ruler</span></h2>
+        <p>
+          Press <kbd>U</kbd> for the ruler tool and click the nodes to measure, in order: <strong>Vin</strong>, then
+          <strong>Vc</strong>, then <strong>GND</strong>. You can click anywhere on a wire or a pin of the node. The hint
+          at the top of the canvas shows the path so far, like <code>Vin → Vc</code>. Press <kbd>Enter</kbd> (or
+          double-click the last node) to finish.
+        </p>
+        <figure>
+          <img src="media/t1-ruler.webp" width="1000" height="516" alt="Clip: clicking the Vin wire, the Vc node and ground, then pressing Enter; a ruler appears beside the circuit." loading="lazy" />
+          <figcaption><span class="tag">clip</span>Picking the path Vin → Vc → GND.</figcaption>
+        </figure>
+        <p>
+          The new ruler appears beside the circuit and is selected, so the plot at the bottom now shows its nodes. At
+          t = 0 the step hasn't happened yet, so every node sits at 0 V and the ruler is collapsed at the bottom of
+          its scale. The plot already shows the whole run: Vin jumps at 1 ms and Vc follows it up along a curve.
+        </p>
+        <figure>
+          <img src="media/t1-ruler-still.webp" width="1800" height="1125" alt="The full app with the new ruler at t = 0, all nodes at 0 V; the plot shows Vin stepping to 5 V at 1 ms and Vc rising exponentially." loading="lazy" />
+        </figure>
+
+        <h2 id="scrub"><span class="step"><span class="n">6</span>Scrub through time</span></h2>
+        <p>
+          Drag the time scrubber at the bottom, or click and drag on the plot. The live ruler follows. Read the two
+          brackets beside the spine: V<sub>R1</sub> is the drop across the resistor and V<sub>C1</sub> the voltage
+          on the capacitor. Their sum is always Vin.
+        </p>
+        <figure>
+          <img src="media/t1-scrub.webp" width="960" height="745" alt="Clip: dragging the scrubber forward and back; the ruler's Vc tick climbs from 0 V toward 5 V while the V_R1 bracket shrinks." loading="lazy" />
+          <figcaption><span class="tag">clip</span>Scrubbing forward and back through the run.</figcaption>
+        </figure>
+        <div class="note physics">
+          <span class="label">What you're seeing</span>
+          <p>
+            Right after the step, the capacitor is still empty and holds 0 V, so all 5 V drop across R1. Current flows,
+            C1 charges, and the drop moves from R1 onto C1. The time constant is τ = R·C = 1 kΩ × 1 µF = 1 ms. One τ
+            after the step (t = 2 ms), Vc has reached 1 − e<sup>−1</sup> ≈ 63 % of 5 V, about 3.16 V.
+          </p>
+        </div>
+        <p>
+          <kbd>←</kbd> and <kbd>→</kbd> step one time point at a time, and <kbd>⇧</kbd> makes it ten. <kbd>Home</kbd>
+          and <kbd>End</kbd> jump to the start and the end.
+        </p>
+
+        <h2 id="pin"><span class="step"><span class="n">7</span>Pin a snapshot and play</span></h2>
+        <p>
+          Move the scrubber to 1.5 ms: press <kbd>Home</kbd>, then <kbd>⇧</kbd><kbd>→</kbd> 30 times, since each step is
+          5 µs. Click the ruler to select it and press <kbd>P</kbd>. A copy appears to its right, <strong>pinned</strong>
+          at 1.5 ms. Its frame is dashed in amber and a marker shows its moment on the plot.
+        </p>
+        <p>Press <kbd>Space</kbd> to play. The live ruler runs on while the pinned one stays put.</p>
+        <figure>
+          <img src="media/t1-pin.webp" width="960" height="745" alt="Clip: selecting the ruler, pressing P to create a pinned copy at 1.5 ms, then pressing Space to play while the live ruler keeps changing." loading="lazy" />
+          <figcaption><span class="tag">clip</span>A full run plays in 8 seconds at 1× (the speed menu goes from 0.25× to 4×).</figcaption>
+        </figure>
+        <figure>
+          <img src="media/t1-final-still.webp" width="1800" height="1397" alt="Live ruler at 3 ms showing Vc at 4.32 V beside the pinned ruler at 1.5 ms showing Vc at 1.96 V." loading="lazy" />
+          <figcaption>
+            The live ruler at 3 ms (Vc = 4.32 V, V<sub>R1</sub> = 0.68 V) next to the snapshot at 1.5 ms
+            (Vc = 1.96 V, V<sub>R1</sub> = 3.04 V). Both use the circuit's full 0–5 V scale, so their heights compare
+            directly.
+          </figcaption>
+        </figure>
+
+        <h2 id="next">Try next</h2>
+        <ul>
+          <li>
+            Select R1 and change its resistance to <code>2.2k</code>. The circuit re-simulates at once: the curve
+            slows down, and the pinned ruler now shows the new circuit at 1.5 ms. A pinned ruler holds a moment of the
+            run, not a copy of old values.
+          </li>
+          <li>
+            Select the pinned ruler and click <strong>Follow scrubber</strong> to make it live again, or
+            <strong>Move pin to …</strong> to re-pin it at the current time.
+          </li>
+          <li>Swap R1 for an inductor to get a ringing RLC circuit (or load <strong>RLC ringing</strong> from the Examples menu).</li>
+          <li>Your circuit autosaves in this browser. <strong>Save</strong> downloads it as a JSON file, and <strong>Open</strong> loads one back.</li>
+        </ul>
+
+        <div class="pager">
+          <a href="./"><span>Previous</span>← Overview</a>
+          <a class="next" href="tutorial-transistor"><span>Next</span>Tutorial 2 · A transistor amplifier →</a>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

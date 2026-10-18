@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Voltage rulers · Circuit Rulers docs</title>
+    <meta name="description" content="How voltage rulers work in Circuit Rulers: node paths, step brackets, signs and lanes, shared and custom scales, live and pinned rulers." />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 20 20%27%3E%3Cpath d=%27M6 3h4M8 3v14M6 17h4M14 3v14M12 9h4%27 stroke=%27%237cc7ff%27 stroke-width=%271.8%27 fill=%27none%27/%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="docs.css" />
+  </head>
+  <body>
+    <header class="top">
+      <a class="brand" href="./">
+        <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M6 3h4M8 3v14M6 17h4M14 3v14M12 9h4" stroke="currentColor" stroke-width="1.6" fill="none" /></svg>
+        Circuit Rulers <span>docs</span>
+      </a>
+      <a class="open-app" href="/">Open the app →</a>
+    </header>
+    <div class="layout">
+      <nav class="side" aria-label="Documentation">
+        <p>Start</p>
+        <a href="./">Overview</a>
+        <p>Tutorials</p>
+        <a href="tutorial-rc">1 · An RC circuit</a>
+        <a href="tutorial-transistor">2 · A transistor amplifier</a>
+        <p>Features</p>
+        <a href="editor">Drawing circuits</a>
+        <a href="rulers" aria-current="page">Voltage rulers</a>
+        <a href="time">Time and the plot</a>
+        <a href="currents-regions">Currents and regions</a>
+        <a href="simulator">Simulator and models</a>
+        <a href="examples">Examples</a>
+      </nav>
+      <main class="doc">
+        <p class="eyebrow">Features</p>
+        <h1>Voltage rulers</h1>
+        <p class="lede">
+          A ruler is a vertical voltage scale drawn beside the schematic. It shows where a chosen path of nodes sits and
+          how much voltage each step of the path takes, at one moment of the run.
+        </p>
+
+        <h2 id="anatomy">Reading a ruler</h2>
+        <figure>
+          <img src="media/t2-snap-still.webp" width="1800" height="1032" alt="Three rulers beside a common-emitter amplifier: one live at 500 µs and two pinned at 250 µs and 750 µs, each with ticks for Vcc, Vc, Ve and GND and brackets for V_Rc, V_Q1 CE and V_Re." loading="lazy" />
+          <figcaption>A live ruler (white dashed frame) and two pinned ones (amber) on the path Vcc → Vc → Ve → GND.</figcaption>
+        </figure>
+        <ul>
+          <li><strong>Title and tag.</strong> The ruler's name, then <span style="color: var(--accent)">live · t = …</span> or <span style="color: var(--pinned)">pinned · t = …</span>, the moment it shows.</li>
+          <li><strong>Spine.</strong> Runs through the path's nodes, with I-beam caps on the first and last.</li>
+          <li><strong>Ticks.</strong> One per node, at that node's voltage, with its name and value. Each node keeps its colour on the ruler, in the plot and on the selected ruler's wires.</li>
+          <li><strong>Step brackets.</strong> One for each pair of neighbouring nodes in the path, labelled with the voltage across that step (see <a href="#steps">below</a>).</li>
+          <li><strong>Scale.</strong> The top and bottom of the scale are printed at the ends, with a dotted line at 0 V when it's in range.</li>
+        </ul>
+
+        <h2 id="make">Making a ruler</h2>
+        <ol>
+          <li>Press <kbd>U</kbd> or pick the ruler tool (the I-beam in the toolbar).</li>
+          <li>Click the nodes in order, on a wire or a pin of each. The hint bar shows the path so far, like <code>Vdd → N1</code>. A node can only appear once.</li>
+          <li>Finish with <kbd>Enter</kbd>, a double-click on the last node, a second click on it, or a right-click. <kbd>⌫</kbd> removes the last node and <kbd>Esc</kbd> cancels.</li>
+        </ol>
+        <p>
+          The new ruler is placed to the right of the others and selected, so the plot switches to its nodes. A path
+          needs at least two nodes, and they don't have to be connected through parts. Any two nodes give you the
+          voltage between them.
+        </p>
+
+        <h2 id="steps">Step labels, signs and lanes</h2>
+        <ul>
+          <li>A step across a single part is labelled with that part: V<sub>R1</sub>, V<sub>C1</sub>, V<sub>L1</sub>.</li>
+          <li>For a transistor or op-amp, the label names the pin pair: V<sub>Q1 CE</sub>, V<sub>Q1 BE</sub>, V<sub>M1 DS</sub>, V<sub>M1 GS</sub>. For PNP and PMOS the order flips (EC, SD) so the value is positive in normal operation.</li>
+          <li>Several parts in parallel are joined with ‖, for example V<sub>M1 DS ‖ CL</sub>.</li>
+          <li>If no single part connects the two nodes, the step reads <strong>ΔV</strong>.</li>
+          <li>Values are <strong>signed in path order</strong>: the first node's voltage minus the next one's. A reversed voltage, like an inductor's during ringing, comes out negative and is drawn in an outer lane so it doesn't overlap the others.</li>
+          <li>A bracket too short for its label gets a leader line out to the label.</li>
+        </ul>
+        <figure>
+          <img src="media/f-rlc-38-still.webp" width="1800" height="1032" alt="RLC ringing example: the pinned ruler at 600 µs shows Vc above Vin at 6.73 V, with a V_L1 bracket of −1.92 V in an outer lane." loading="lazy" />
+          <figcaption>
+            <strong>RLC ringing</strong> at 600 µs: the capacitor has overshot the 5 V input, so the drop across L1 is
+            reversed (−1.92 V) and sits in its own lane.
+          </figcaption>
+        </figure>
+
+        <h2 id="scale">Scale</h2>
+        <p>
+          By default a ruler uses the <strong>whole circuit's</strong> range over the run: from the lowest to the highest
+          voltage at any node at any time, with GND included. All rulers then share one scale, so a path in the middle
+          of the circuit shows at its true height and you can compare rulers by eye.
+        </p>
+        <p>
+          For small differences, select the ruler and set <strong>Range</strong> to <strong>Custom</strong> in the
+          inspector. You can then:
+        </p>
+        <ul>
+          <li>type a <strong>Maximum</strong> and <strong>Minimum</strong>,</li>
+          <li>click <strong>Fit to path</strong> to zoom onto the range this path covers over the run, plus a small margin,</li>
+          <li>click <strong>Reset to circuit</strong> to go back to the full range while staying on Custom.</li>
+        </ul>
+        <p>Nodes outside a custom range sit at the edge of the scale, marked ▲ or ▼.</p>
+        <figure>
+          <img src="media/f-diff-pair-30-still.webp" width="1800" height="1032" alt="Differential amplifier example with three rulers, the middle one on a zoomed custom scale showing the small floating output between Vo1 and Vo2." loading="lazy" />
+          <figcaption>
+            The <strong>Differential amplifier</strong> example puts its floating output on a zoomed custom scale,
+            which makes a small difference between two high nodes readable.
+          </figcaption>
+        </figure>
+
+        <h2 id="time">Live and pinned</h2>
+        <p>
+          A <strong>live</strong> ruler shows the time under the scrubber. A <strong>pinned</strong> ruler shows a fixed
+          moment, and a marker with its name shows that moment on the plot. With a ruler selected, the inspector's
+          <strong>Time</strong> section offers:
+        </p>
+        <ul>
+          <li><strong>Pin here</strong>, which pins this ruler at the current time,</li>
+          <li><strong>Snapshot (P)</strong>, which adds a pinned copy at the current time and leaves this one live,</li>
+          <li>on a pinned ruler, a <strong>Pinned at</strong> field you can type into, <strong>Move pin to …</strong> and <strong>Follow scrubber</strong>.</li>
+        </ul>
+        <p>
+          A pinned ruler holds a <em>time</em>, not a copy of the values. If you change the circuit, it shows the new run
+          at that moment.
+        </p>
+
+        <h2 id="edit">Editing a ruler</h2>
+        <figure class="narrow">
+          <img src="media/f-ruler-inspector-still.webp" width="280" height="500" alt="The voltage ruler inspector: name, the path list with remove buttons, Re-pick path and Reverse, the scale range and the time controls." loading="lazy" />
+        </figure>
+        <ul>
+          <li><strong>Name:</strong> rulers are named Ruler 1, Ruler 2, …, and you can rename them.</li>
+          <li><strong>Path:</strong> lists the nodes with the part between each pair. <strong>×</strong> removes a node, <strong>Reverse</strong> flips the order and the signs, and <strong>Re-pick path</strong> lets you click a new sequence of nodes for the same ruler.</li>
+          <li><strong>Move</strong> a ruler by dragging it, and change its <strong>height</strong> by dragging the small handle under its bottom-right corner.</li>
+          <li>Ruler nodes are grid points, so moving parts carries the path along with their pins. A node whose point is no longer on a wire or pin shows as “detached”, and the ruler reports the problem until you fix or remove that node.</li>
+        </ul>
+
+        <div class="pager">
+          <a href="editor"><span>Previous</span>← Drawing circuits</a>
+          <a class="next" href="time"><span>Next</span>Time and the plot →</a>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

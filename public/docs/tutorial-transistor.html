@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tutorial 2: A transistor amplifier · Circuit Rulers docs</title>
+    <meta name="description" content="Build a common-emitter BJT amplifier in Circuit Rulers and explore operating regions, rulers, snapshots, probes, wire currents, custom scales and overdrive." />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 20 20%27%3E%3Cpath d=%27M6 3h4M8 3v14M6 17h4M14 3v14M12 9h4%27 stroke=%27%237cc7ff%27 stroke-width=%271.8%27 fill=%27none%27/%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="docs.css" />
+  </head>
+  <body>
+    <header class="top">
+      <a class="brand" href="./">
+        <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M6 3h4M8 3v14M6 17h4M14 3v14M12 9h4" stroke="currentColor" stroke-width="1.6" fill="none" /></svg>
+        Circuit Rulers <span>docs</span>
+      </a>
+      <a class="open-app" href="/">Open the app →</a>
+    </header>
+    <div class="layout">
+      <nav class="side" aria-label="Documentation">
+        <p>Start</p>
+        <a href="./">Overview</a>
+        <p>Tutorials</p>
+        <a href="tutorial-rc">1 · An RC circuit</a>
+        <a href="tutorial-transistor" aria-current="page">2 · A transistor amplifier</a>
+        <p>Features</p>
+        <a href="editor">Drawing circuits</a>
+        <a href="rulers">Voltage rulers</a>
+        <a href="time">Time and the plot</a>
+        <a href="currents-regions">Currents and regions</a>
+        <a href="simulator">Simulator and models</a>
+        <a href="examples">Examples</a>
+      </nav>
+      <main class="doc">
+        <p class="eyebrow">Tutorial 2</p>
+        <h1>A transistor amplifier</h1>
+        <p class="lede">
+          Build a common-emitter amplifier around an NPN transistor, then use the app to see why it amplifies, how big the
+          gain is, and what happens when you drive it too hard.
+        </p>
+        <div class="meta">
+          <span>About 15 minutes</span>
+          <span>You'll use: operating regions, a four-node ruler, snapshots, probes, wire current, a custom scale</span>
+        </div>
+        <p>
+          This builds on <a href="tutorial-rc">tutorial 1</a>. If you'd rather skip the drawing, load
+          <strong>Common-emitter amplifier</strong> from the Examples menu. It's the same circuit with its rulers already
+          placed, and you can pick this tutorial up at <a href="#region">step 2</a>.
+        </p>
+
+        <h2 id="build"><span class="step"><span class="n">1</span>Build the circuit</span></h2>
+        <p>Click <strong>New</strong>, then place and wire these parts:</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Part</th><th>Value</th><th>Where it goes</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>V1</td><td>DC 12 V</td><td>The supply: + to a <code>Vcc</code> label, − to ground</td></tr>
+              <tr><td>Rc</td><td>4.7 kΩ</td><td>From Vcc down to the collector (label that node <code>Vc</code>)</td></tr>
+              <tr><td>Q1 (NPN)</td><td>β = 100</td><td>Collector up, emitter down, base to the left</td></tr>
+              <tr><td>Re</td><td>1 kΩ</td><td>From the emitter (label it <code>Ve</code>) down to ground</td></tr>
+              <tr><td>Rb1, Rb2</td><td>47 kΩ, 10 kΩ</td><td>A divider from Vcc to ground, its middle wired to the base (label it <code>Vb</code>)</td></tr>
+              <tr><td>Cin</td><td>10 µF</td><td>Horizontal (press <kbd>R</kbd> before placing), from the input source to Vb</td></tr>
+              <tr><td>Vin</td><td>Sine, 500 mV, 1 kHz</td><td>The signal: + to Cin, − to ground</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          The three <code>Vcc</code> labels don't need wires between them: <strong>net labels with the same name are
+          the same node</strong>, wherever they are on the sheet.
+        </p>
+        <figure class="narrow">
+          <img src="media/t2-build.webp" width="717" height="561" alt="Clip at double speed: placing four resistors, a transistor, a rotated capacitor, two sources, grounds and labels, then drawing the wires." loading="lazy" />
+          <figcaption><span class="tag">clip · 2×</span>Placing the parts and wiring them. The labels still read Vdd and the values are defaults; that's next.</figcaption>
+        </figure>
+
+        <h3>Set names and values</h3>
+        <p>
+          Select each part and fill in its name and value in the inspector. Values take engineering notation:
+          <code>4.7k</code>, <code>47k</code>, <code>10u</code> (or <code>10µ</code>), <code>500m</code>. Prefixes are
+          case-sensitive: <code>m</code> is milli and <code>M</code> (or <code>meg</code>) is mega.
+        </p>
+        <figure>
+          <img src="media/t2-values.webp" width="1000" height="438" alt="Clip: selecting the collector resistor and typing the name Rc and the value 4.7k in the inspector." loading="lazy" />
+          <figcaption><span class="tag">clip</span>Renaming R1 to Rc and setting it to 4.7 kΩ.</figcaption>
+        </figure>
+        <p>
+          For the input source, set <strong>Waveform</strong> to <strong>Sine</strong>, <strong>Amplitude</strong> to
+          <code>0.5</code> and <strong>Frequency</strong> to <code>1k</code>.
+        </p>
+        <figure>
+          <img src="media/t2-source.webp" width="1000" height="438" alt="Clip: renaming V2 to Vin, switching its waveform to Sine and entering a 0.5 V amplitude and 1 kHz frequency." loading="lazy" />
+          <figcaption><span class="tag">clip</span>Configuring the input source.</figcaption>
+        </figure>
+        <p>
+          Finally, click an empty spot on the canvas to show the simulation settings. Set <strong>Duration</strong> to
+          <code>3m</code>, which is three cycles, and <strong>Time steps</strong> to <code>1500</code>, a 2 µs step.
+        </p>
+        <figure>
+          <img src="media/t2-schematic-still.webp" width="1396" height="1270" alt="The finished common-emitter amplifier schematic with Q1 labelled active." loading="lazy" />
+          <figcaption>The finished amplifier. Q1 already carries a green <strong>active</strong> label.</figcaption>
+        </figure>
+
+        <h2 id="region"><span class="step"><span class="n">2</span>Check the operating region</span></h2>
+        <p>
+          The small label under β shows the transistor's <strong>operating region</strong> at the current time. Green means
+          amplifying, which for a BJT is <em>forward active</em>. Hover Q1 for a tooltip with its voltages and currents.
+        </p>
+        <figure class="narrow">
+          <img src="media/f-tooltip-still.webp" width="640" height="560" alt="Tooltip over Q1: Region Forward active, VCE 4.64 V, VBE 661 mV, IC 1.29 mA, IB 12.9 µA, IE −1.30 mA." loading="lazy" />
+          <figcaption>The hover tooltip. “(in)” currents flow into the pin, so I<sub>E</sub> is negative: current leaves through the emitter.</figcaption>
+        </figure>
+        <p>Select Q1 and the inspector shows the same readout, plus the rule that decided the region:</p>
+        <figure>
+          <img src="media/t2-q1-still.webp" width="1800" height="1125" alt="Q1 selected; the inspector shows Forward active with the reason VBE = 662 mV ≥ 0.5 V, VBC = −3.81 V < 0.4 V." loading="lazy" />
+          <figcaption>V<sub>BE</sub> ≥ 0.5 V means the base–emitter junction is on, and V<sub>BC</sub> &lt; 0.4 V means the base–collector junction is off. That combination is forward active.</figcaption>
+        </figure>
+        <div class="note physics">
+          <span class="label">The bias, by hand</span>
+          <p>
+            The divider sets V<sub>b</sub> ≈ 12 V × 10k / 57k ≈ 2.1 V, a little less once the base draws current.
+            The emitter sits one V<sub>BE</sub> lower, at about 1.3 V, so I<sub>E</sub> ≈ 1.3 V / 1 kΩ ≈ 1.3 mA.
+            Almost all of that flows through Rc, dropping about 6.2 V, so V<sub>c</sub> ≈ 5.8 V: roughly mid-supply,
+            leaving room to swing both ways.
+          </p>
+        </div>
+
+        <h2 id="ruler"><span class="step"><span class="n">3</span>A ruler down the collector stack</span></h2>
+        <p>
+          Press <kbd>U</kbd> and click four nodes from top to bottom: <strong>Vcc</strong> (the top of Rc),
+          <strong>Vc</strong>, <strong>Ve</strong> and <strong>GND</strong>. Press <kbd>Enter</kbd>, click
+          <strong>Fit</strong> in the top bar to bring everything into view, and press <kbd>Space</kbd> to play.
+        </p>
+        <figure>
+          <img src="media/t2-ruler.webp" width="960" height="746" alt="Clip: building a four-node ruler Vcc → Vc → Ve → GND and playing the simulation; the Vc tick swings up and down while Ve moves slightly." loading="lazy" />
+          <figcaption><span class="tag">clip</span>The three brackets are V<sub>Rc</sub>, V<sub>Q1 CE</sub> and V<sub>Re</sub>, and they always add up to the 12 V supply.</figcaption>
+        </figure>
+        <p>
+          The ruler labels each step with the part it crosses. Between Vc and Ve that's the transistor's
+          collector–emitter pair, so the bracket reads V<sub>Q1 CE</sub>. Watch the 12 V get shared out over a cycle:
+          when Vin rises, more current flows, V<sub>Rc</sub> grows and V<sub>CE</sub> shrinks. The emitter moves only a
+          little, because Re is small next to Rc.
+        </p>
+
+        <h2 id="snapshots"><span class="step"><span class="n">4</span>Snapshot the extremes and measure the gain</span></h2>
+        <p>
+          The input peaks at 250 µs and bottoms out at 750 µs. Press <kbd>Home</kbd>, step to 250 µs
+          (<kbd>⇧</kbd><kbd>→</kbd> 12 times, then <kbd>→</kbd> 5 times), select the ruler and press <kbd>P</kbd>. Then step
+          to 750 µs, select the <em>live</em> ruler again and press <kbd>P</kbd>.
+        </p>
+        <figure>
+          <img src="media/t2-snap.webp" width="1000" height="625" alt="Clip: stepping to 250 µs and pressing P, stepping to 750 µs and pressing P again; two pinned rulers appear beside the live one." loading="lazy" />
+          <figcaption><span class="tag">clip</span>Two pinned snapshots, one at each extreme of the input.</figcaption>
+        </figure>
+        <figure>
+          <img src="media/t2-snap-still.webp" width="1800" height="1032" alt="Live ruler at 500 µs next to pinned rulers at 250 µs (Vc 3.51 V) and 750 µs (Vc 8.07 V)." loading="lazy" />
+          <figcaption>Live at 500 µs, pinned at 250 µs and at 750 µs. All three share the circuit's scale.</figcaption>
+        </figure>
+        <div class="note physics">
+          <span class="label">Reading off the gain</span>
+          <p>
+            Vc goes from 3.51 V to 8.07 V, a 4.56 V swing, while the input swings 1 V peak to peak. The gain is about
+            −4.6: inverted, since Vc is lowest when Vin is highest. The textbook estimate is −Rc / Re = −4.7. Ve only
+            moves from 1.83 V to 0.85 V: the emitter follows the base, which is why the gain is set by the resistor
+            ratio.
+          </p>
+        </div>
+
+        <h2 id="probe"><span class="step"><span class="n">5</span>Probe a node and colour the wires by current</span></h2>
+        <p>
+          The plot shows the selected ruler's nodes. To add another node without putting it on a ruler, press
+          <kbd>T</kbd> for the probe tool and click it. Here that's the Vb wire. It's drawn as a fainter extra trace, and
+          the <strong>×</strong> next to its name in the legend removes it. The <strong>+ trace</strong> menu in the
+          legend does the same thing as the probe tool.
+        </p>
+        <p>
+          Then tick <strong>Wire current</strong> in the top bar. Each wire is coloured by the current through it, from
+          silver for almost none to red for the largest current in the run. The legend in the corner gives the scale.
+        </p>
+        <figure>
+          <img src="media/t2-probe.webp" width="960" height="746" alt="Clip: probing Vb, which adds a faint trace to the plot, then enabling Wire current; the collector and emitter wires turn red while the bias divider stays pale." loading="lazy" />
+          <figcaption><span class="tag">clip</span>The collector–emitter path carries milliamps and the bias divider only about 0.2 mA, so the wire colours show where the current goes.</figcaption>
+        </figure>
+
+        <h2 id="zoom"><span class="step"><span class="n">6</span>Zoom a ruler onto V<sub>BE</sub></span></h2>
+        <p>
+          On the shared scale, V<sub>BE</sub> is a sliver. Make a two-node ruler from <strong>Vb</strong> to
+          <strong>Ve</strong>. In the inspector, set <strong>Range</strong> to <strong>Custom</strong> and click
+          <strong>Fit to path</strong>. The scale now covers just the range those two nodes move through during the run, plus a little margin.
+          You can also type a <strong>Maximum</strong> and <strong>Minimum</strong> yourself.
+        </p>
+        <figure>
+          <img src="media/t2-vbe.webp" width="1000" height="625" alt="Clip: creating a Vb → Ve ruler, switching its range to Custom, clicking Fit to path, and playing; the two ticks move up and down together with a nearly constant gap." loading="lazy" />
+          <figcaption><span class="tag">clip</span>Vb and Ve rise and fall together. The V<sub>Q1 BE</sub> bracket between them hardly changes.</figcaption>
+        </figure>
+        <p>
+          The base swings by a full volt, but V<sub>BE</sub> stays between about 0.65 and 0.67 V. The
+          exponential junction needs only a small change in V<sub>BE</sub> to change the current a lot. That's why
+          “V<sub>BE</sub> ≈ 0.7 V” works so well as a rule of thumb.
+        </p>
+
+        <h2 id="overdrive"><span class="step"><span class="n">7</span>Drive it too hard</span></h2>
+        <p>
+          Select Vin and raise its <strong>Amplitude</strong> to <code>2</code>. Press <kbd>Home</kbd>, then
+          <kbd>Space</kbd>, and watch Q1's region label and the rulers.
+        </p>
+        <figure>
+          <img src="media/t2-overdrive.webp" width="1000" height="625" alt="Clip: setting Vin's amplitude to 2 V and playing; Q1's label alternates between active, saturation and cutoff while the plot shows a clipped collector waveform." loading="lazy" />
+          <figcaption><span class="tag">clip</span>The collector waveform now clips at both ends.</figcaption>
+        </figure>
+        <div class="pair">
+          <figure>
+            <img src="media/t2-sat-still.webp" width="990" height="820" alt="At 250 µs Q1 is labelled saturation and V_Q1 CE is about 31 mV." loading="lazy" />
+            <figcaption>At 250 µs: amber <strong>saturation</strong>. V<sub>CE</sub> has collapsed to about 31 mV, and both junctions are on.</figcaption>
+          </figure>
+          <figure>
+            <img src="media/t2-cutoff-still.webp" width="990" height="820" alt="At 750 µs Q1 is labelled cutoff; Vc equals Vcc and V_Rc is essentially zero." loading="lazy" />
+            <figcaption>At 750 µs: grey <strong>cutoff</strong>. No current flows, so V<sub>Rc</sub> ≈ 0 and Vc rises to the full 12 V.</figcaption>
+          </figure>
+        </div>
+        <p>
+          Your snapshots changed too. A pinned ruler is pinned to a <em>time</em>, so when the circuit changes it shows
+          the new run at that moment. The plot shows the clipping as a flat top at 12 V and a flat bottom near 3.3 V,
+          where the saturated transistor makes Vc follow Ve.
+        </p>
+
+        <h2 id="next">Try next</h2>
+        <ul>
+          <li>Set the amplitude to <code>10m</code> and add a 100 µF capacitor across Re. It shorts Re for the signal but not for the bias, so the gain jumps to about Rc / r<sub>e</sub> ≈ 250, and even 10 mV starts to distort. The <strong>Common emitter, bypassed Re</strong> example is this circuit.</li>
+          <li>Reverse a ruler (<strong>Reverse</strong> in the inspector) and its step voltages change sign, since they're signed in path order.</li>
+          <li>Load <strong>Emitter follower</strong> or <strong>Current mirror</strong> from the Examples menu. Every example comes with its rulers placed.</li>
+          <li>Read <a href="rulers">Voltage rulers</a> and <a href="currents-regions">Currents and regions</a> for everything these tools can do.</li>
+        </ul>
+
+        <div class="pager">
+          <a href="tutorial-rc"><span>Previous</span>← Tutorial 1 · An RC circuit</a>
+          <a class="next" href="editor"><span>Next</span>Drawing circuits →</a>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

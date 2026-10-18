@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Time and the plot · Circuit Rulers docs</title>
+    <meta name="description" content="Simulation settings, source waveforms, the time scrubber and playback, the plot, and probes in Circuit Rulers." />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 20 20%27%3E%3Cpath d=%27M6 3h4M8 3v14M6 17h4M14 3v14M12 9h4%27 stroke=%27%237cc7ff%27 stroke-width=%271.8%27 fill=%27none%27/%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="docs.css" />
+  </head>
+  <body>
+    <header class="top">
+      <a class="brand" href="./">
+        <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M6 3h4M8 3v14M6 17h4M14 3v14M12 9h4" stroke="currentColor" stroke-width="1.6" fill="none" /></svg>
+        Circuit Rulers <span>docs</span>
+      </a>
+      <a class="open-app" href="/">Open the app →</a>
+    </header>
+    <div class="layout">
+      <nav class="side" aria-label="Documentation">
+        <p>Start</p>
+        <a href="./">Overview</a>
+        <p>Tutorials</p>
+        <a href="tutorial-rc">1 · An RC circuit</a>
+        <a href="tutorial-transistor">2 · A transistor amplifier</a>
+        <p>Features</p>
+        <a href="editor">Drawing circuits</a>
+        <a href="rulers">Voltage rulers</a>
+        <a href="time" aria-current="page">Time and the plot</a>
+        <a href="currents-regions">Currents and regions</a>
+        <a href="simulator">Simulator and models</a>
+        <a href="examples">Examples</a>
+      </nav>
+      <main class="doc">
+        <p class="eyebrow">Features</p>
+        <h1>Time and the plot</h1>
+        <p class="lede">
+          Every circuit is simulated over a stretch of time. You choose how long and how finely, then move through the
+          result with the scrubber, the keyboard or the plot.
+        </p>
+
+        <h2 id="settings">Simulation settings</h2>
+        <div class="pair">
+          <figure class="narrow">
+            <img src="media/f-sim-still.webp" width="280" height="330" alt="Simulation settings in the inspector: Duration, Time steps, Start from, Integration and the step size." loading="lazy" />
+          </figure>
+          <div>
+            <p>Click an empty spot on the canvas to see them in the inspector.</p>
+            <ul>
+              <li><strong>Duration:</strong> how long the run lasts, from t = 0.</li>
+              <li><strong>Time steps:</strong> the number of points on the time grid, from 2 to 20 000. The step size is shown below.</li>
+              <li><strong>Start from:</strong> the <em>DC operating point</em> (the circuit settled before t = 0), or the <em>initial conditions</em> on capacitors and inductors, which are zero unless you set them.</li>
+              <li><strong>Integration:</strong> trapezoidal (the default, accurate) or backward Euler (damps ringing a little).</li>
+            </ul>
+          </div>
+        </div>
+        <p>
+          The circuit re-simulates whenever its connectivity, a value or a setting changes. Moving parts around without
+          changing what's connected doesn't trigger a new run. The top bar shows the result: steps, step size and how long
+          it took, or a ⚠ with the reason if the simulation stopped.
+        </p>
+        <div class="note">
+          <p>
+            Choose a step well below the fastest thing you want to see: a tenth of a time constant, or 50 or more steps
+            per period of a sine. Fast edges in a slow run can be missed between steps.
+          </p>
+        </div>
+
+        <h2 id="sources">Sources and waveforms</h2>
+        <p>Voltage and current sources take one of four waveforms, set in the inspector:</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Waveform</th><th>Settings</th></tr></thead>
+            <tbody>
+              <tr><td>DC</td><td>Value</td></tr>
+              <tr><td>Step</td><td>Initial, Final, Step at, Rise time</td></tr>
+              <tr><td>Pulse</td><td>Low, High, Delay, Rise time, Fall time, High for, Period (repeating)</td></tr>
+              <tr><td>Sine</td><td>Offset, Amplitude, Frequency, Delay, Phase</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          The symbol shows the waveform type, and a short description is printed beside it, for example
+          <code>step 0→5V</code> or <code>sin 500mV 1kHz</code>.
+        </p>
+
+        <h2 id="playback">Scrubbing and playback</h2>
+        <ul>
+          <li>Drag the <strong>scrubber</strong>, or click or drag anywhere on the plot.</li>
+          <li><kbd>Space</kbd> or the ▶ button plays. A full run plays in 8 seconds at 1×, and the speed menu offers 0.25× to 4×.</li>
+          <li><kbd>←</kbd> / <kbd>→</kbd> step one time point (ten with <kbd>⇧</kbd>), and <kbd>Home</kbd> / <kbd>End</kbd> jump to either end. The ⏮ button also goes back to the start.</li>
+          <li>The current time is printed on the right, as <code>t = 1.500 ms / 6.00 ms</code>.</li>
+        </ul>
+        <figure>
+          <img src="media/t1-scrub.webp" width="960" height="745" alt="Clip: dragging the scrubber; the live ruler and the plot cursor follow." loading="lazy" />
+          <figcaption><span class="tag">clip</span>The live ruler and the plot cursor follow the scrubber.</figcaption>
+        </figure>
+
+        <h2 id="plot">The plot</h2>
+        <p>
+          The plot shows node voltages over the whole run, with a cursor at the current time. Its traces follow a ruler:
+          the <strong>selected</strong> one, or the first ruler when none is selected. The legend shows that ruler's name
+          and its nodes, in the same colours as its ticks.
+        </p>
+        <ul>
+          <li>Pinned rulers appear as labelled dashed markers at their moment.</li>
+          <li>Hover a wire on the canvas to see its node as a temporary white trace.</li>
+          <li>With no rulers at all, the plot shows the first few nodes of the circuit.</li>
+        </ul>
+
+        <h2 id="probes">Probes</h2>
+        <p>
+          A probe adds a node to the plot without putting it on a ruler. Press <kbd>T</kbd> (or pick the probe tool) and
+          click a wire or pin. Click the same node again to remove it, or click the <strong>×</strong> next to its name in
+          the legend. The <strong>+ trace</strong> menu in the legend adds a node by name.
+        </p>
+        <ul>
+          <li>Probed nodes are drawn as fainter traces, whichever ruler is selected.</li>
+          <li>They count towards the plot's vertical range.</li>
+          <li>They're saved with the circuit and move with the pins they sit on.</li>
+          <li>GND can't be probed, since it's the 0 V reference.</li>
+        </ul>
+        <figure>
+          <img src="media/t2-probe-still.webp" width="1800" height="1397" alt="The common-emitter amplifier with a probe on Vb, shown in the plot legend as a faint trace with a remove button." loading="lazy" />
+          <figcaption>Vb probed: a faint brown trace under the ruler's Vcc, Vc and Ve.</figcaption>
+        </figure>
+
+        <div class="pager">
+          <a href="rulers"><span>Previous</span>← Voltage rulers</a>
+          <a class="next" href="currents-regions"><span>Next</span>Currents and regions →</a>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

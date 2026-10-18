@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Currents and regions · Circuit Rulers docs</title>
+    <meta name="description" content="Current arrows, wire current colouring, hover and inspector readouts, and how Circuit Rulers decides a BJT or MOSFET operating region." />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 20 20%27%3E%3Cpath d=%27M6 3h4M8 3v14M6 17h4M14 3v14M12 9h4%27 stroke=%27%237cc7ff%27 stroke-width=%271.8%27 fill=%27none%27/%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="docs.css" />
+  </head>
+  <body>
+    <header class="top">
+      <a class="brand" href="./">
+        <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M6 3h4M8 3v14M6 17h4M14 3v14M12 9h4" stroke="currentColor" stroke-width="1.6" fill="none" /></svg>
+        Circuit Rulers <span>docs</span>
+      </a>
+      <a class="open-app" href="/">Open the app →</a>
+    </header>
+    <div class="layout">
+      <nav class="side" aria-label="Documentation">
+        <p>Start</p>
+        <a href="./">Overview</a>
+        <p>Tutorials</p>
+        <a href="tutorial-rc">1 · An RC circuit</a>
+        <a href="tutorial-transistor">2 · A transistor amplifier</a>
+        <p>Features</p>
+        <a href="editor">Drawing circuits</a>
+        <a href="rulers">Voltage rulers</a>
+        <a href="time">Time and the plot</a>
+        <a href="currents-regions" aria-current="page">Currents and regions</a>
+        <a href="simulator">Simulator and models</a>
+        <a href="examples">Examples</a>
+      </nav>
+      <main class="doc">
+        <p class="eyebrow">Features</p>
+        <h1>Currents and regions</h1>
+        <p class="lede">
+          Rulers show voltages. These overlays show where the current flows and what each transistor is doing, at the
+          current time. Turn each one on or off in the top bar.
+        </p>
+
+        <h2 id="arrows">Current arrows</h2>
+        <p>
+          With <strong>Current arrows</strong> on (the default), orange arrowheads on each part's leads point in the
+          direction of conventional current. Their size follows the current's magnitude, scaled to the largest current
+          in the run, so a lead with almost no current gets a tiny arrow.
+        </p>
+
+        <h2 id="wires">Wire current</h2>
+        <p>
+          <strong>Wire current</strong> colours every wire segment by the current through it: silver for little, through
+          amber, to red for the largest current anywhere in the run. The scale is square-root, so small currents still
+          show. A legend in the canvas corner gives the full-scale value.
+        </p>
+        <figure>
+          <img src="media/t2-probe-still.webp" width="1800" height="1397" alt="The common-emitter amplifier with wire current on: the supply and collector–emitter wires are red, the bias divider pale, and a legend reads 0 to 2.01 mA." loading="lazy" />
+          <figcaption>In the common-emitter stage, the collector–emitter path carries milliamps. The bias divider carries about a tenth of that.</figcaption>
+        </figure>
+
+        <h2 id="readouts">Tooltips and the inspector</h2>
+        <p>
+          Hover a part to see its voltages and currents at the current time. Select it to get the same numbers in the
+          inspector under <strong>At t = …</strong>. Hovering a wire shows its node's name and voltage, and adds the node
+          to the plot as a temporary trace.
+        </p>
+        <ul>
+          <li><strong>Two-pin parts</strong> show <em>V across</em> (+ pin minus − pin) and <em>I (+ → −)</em>, the current flowing into the + pin and through the part. For a source delivering power this is negative.</li>
+          <li><strong>Transistors</strong> show the region, the pin-pair voltages (V<sub>CE</sub>, V<sub>BE</sub> or V<sub>DS</sub>, V<sub>GS</sub>) and the current <em>into</em> each pin, marked “(in)”. An emitter current is usually negative.</li>
+          <li><strong>Op-amps</strong> show V<sub>+−</sub> and the output current.</li>
+          <li><strong>Labels and grounds</strong> show their node's voltage.</li>
+        </ul>
+        <figure class="narrow">
+          <img src="media/f-tooltip-still.webp" width="640" height="560" alt="Hover tooltip on Q1: Region Forward active, VCE, VBE and pin currents." loading="lazy" />
+        </figure>
+
+        <h2 id="regions">Transistor operating regions</h2>
+        <p>
+          With <strong>Transistor regions</strong> on, each transistor carries a small label with its operating region.
+          The colour gives the region's <em>role</em>. This lines the two device families up, even though their names
+          clash: a MOSFET in “saturation” is amplifying, like a BJT in forward active.
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Colour</th><th>Role</th><th>BJT</th><th>MOSFET</th></tr></thead>
+            <tbody>
+              <tr><td><span class="swatch" style="background: #8fe39b"></span>green</td><td>amplifying</td><td>forward active</td><td>saturation</td></tr>
+              <tr><td><span class="swatch" style="background: #f5c46a"></span>amber</td><td>fully on (switch)</td><td>saturation</td><td>triode</td></tr>
+              <tr><td><span class="swatch" style="background: #8a8a86"></span>grey</td><td>off</td><td>cutoff</td><td>cutoff</td></tr>
+              <tr><td><span class="swatch" style="background: #c6a4ff"></span>purple</td><td>backwards</td><td>reverse active</td><td>—</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <figure>
+          <img src="media/f-cmos-50-still.webp" width="1800" height="1032" alt="CMOS inverter example with the input high: M2 (PMOS) labelled triode in amber and M1 (NMOS) labelled cutoff in grey." loading="lazy" />
+          <figcaption>
+            The <strong>CMOS inverter</strong> example: here the output is high, with the PMOS M2 fully on (triode)
+            and the NMOS M1 off. Mid-ramp, both conduct for a moment.
+          </figcaption>
+        </figure>
+
+        <h3>How the region is decided</h3>
+        <p><strong>BJT.</strong> Each junction counts as forward biased above a fixed threshold, the usual textbook rule of thumb:</p>
+        <ul>
+          <li>base–emitter on when V<sub>BE</sub> ≥ 0.5 V,</li>
+          <li>base–collector on when V<sub>BC</sub> ≥ 0.4 V.</li>
+        </ul>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>BE junction</th><th>BC junction</th><th>Region</th></tr></thead>
+            <tbody>
+              <tr><td>on</td><td>off</td><td>Forward active</td></tr>
+              <tr><td>on</td><td>on</td><td>Saturation (V<sub>CE</sub> is then below about 0.3 V)</td></tr>
+              <tr><td>off</td><td>on</td><td>Reverse active</td></tr>
+              <tr><td>off</td><td>off</td><td>Cutoff</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>For a PNP the same rules apply to V<sub>EB</sub> and V<sub>CB</sub>.</p>
+        <p><strong>MOSFET.</strong> Compare V<sub>GS</sub> with the threshold V<sub>th</sub>, then V<sub>DS</sub> with the overdrive V<sub>GS</sub> − V<sub>th</sub>:</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Condition</th><th>Region</th></tr></thead>
+            <tbody>
+              <tr><td>V<sub>GS</sub> ≤ V<sub>th</sub></td><td>Cutoff</td></tr>
+              <tr><td>V<sub>DS</sub> &lt; V<sub>GS</sub> − V<sub>th</sub></td><td>Triode (linear)</td></tr>
+              <tr><td>V<sub>DS</sub> ≥ V<sub>GS</sub> − V<sub>th</sub></td><td>Saturation</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          For a PMOS the same rules use V<sub>SG</sub> and V<sub>SD</sub>. If V<sub>DS</sub> goes negative, the drain
+          and source swap roles, the voltages are measured from the lower terminal, and the explanation says so.
+        </p>
+        <p>
+          The inspector prints the rule that applied, with the actual numbers, for example
+          <code>VBE = 662 mV ≥ 0.5 V, VBC = −3.81 V &lt; 0.4 V</code>.
+        </p>
+        <figure>
+          <img src="media/t2-q1-still.webp" width="1800" height="1125" alt="Q1 selected: the inspector shows Region Forward active, the terminal voltages and currents, and the rule that decided the region." loading="lazy" />
+        </figure>
+
+        <div class="pager">
+          <a href="time"><span>Previous</span>← Time and the plot</a>
+          <a class="next" href="simulator"><span>Next</span>Simulator and models →</a>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>
