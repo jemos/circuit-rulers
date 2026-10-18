@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { DocBuilder, isDoc } from './doc';
 import { applyMove } from './edit';
-import { EXAMPLES } from './examples';
 import { buildNetlist } from './netlist';
 
 describe('moving parts', () => {
@@ -15,10 +14,12 @@ describe('moving parts', () => {
     expect(nl.pinNets.get(c.id)![1]).toBe(nl.nets.findIndex((n) => n.isGround));
   });
 
-  it('never leaves a zero-length wire (inverter: move CL down, then its ground onto it)', () => {
-    const doc = EXAMPLES.find((e) => e.id === 'cmos')!.build();
-    const cl = doc.components.find((c) => c.name === 'CL')!; // at (14,10), pins (14,8) and (14,12)
-    const gnd = doc.components.find((c) => c.kind === 'ground' && c.x === 14 && c.y === 12)!;
+  it('never leaves a zero-length wire (move a cap down, then its ground onto it)', () => {
+    const b = new DocBuilder();
+    b.wire([10, 8], [17, 8]);
+    const cl = b.add('capacitor', 14, 10, { name: 'CL' }); // pins (14,8) and (14,12)
+    const gnd = b.add('ground', 14, 12);
+    const doc = b.doc;
     applyMove(doc, new Set([cl.id]), 0, 2); // stretch wire (14,12) → (14,14) from the ground
     expect(doc.wires.some((w) => w.a.y === 12 && w.b.y === 14 && w.a.x === 14)).toBe(true);
     applyMove(doc, new Set([gnd.id]), 0, 2); // ground lands on the cap's new pin
