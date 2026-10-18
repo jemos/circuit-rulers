@@ -1,0 +1,6 @@
+{
+  "name": "circuit-rulers",
+  "compatibility_date": "2026-10-01",
+  "assets": { "directory": "./dist" },
+  "routes": [{ "pattern": "circuits.jemos.net", "custom_domain": true }]
+}

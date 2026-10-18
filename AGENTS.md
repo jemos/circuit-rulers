@@ -25,10 +25,33 @@ npm run dev        # Vite dev server (default port 5173)
 npm test           # vitest, all *.test.ts under src/
 npm run typecheck  # tsc -b --noEmit (strict, noUnusedLocals/Parameters)
 npm run build      # tsc -b && vite build → dist/
+./deploy.sh        # build and publish to https://circuits.jemos.net (see Deploying)
 ```
 
 Before considering a change done, run `npm run typecheck`, `npm test` and
 `npm run build`.
+
+## Deploying
+
+The site is hosted on Cloudflare as a Workers static-assets project named
+`circuit-rulers`. There is no CI/CD, deliberately: the repo is public, so
+deploys are manual and on demand from the owner's machine. Don't add workflow
+files, and don't deploy unless asked.
+
+- **`wrangler.jsonc`** sets the Worker name, serves `dist/` as static assets,
+  and attaches the `circuits.jemos.net` custom domain. Keep secrets and the
+  account id out of it.
+- **`deploy.sh`** runs `npm ci`, the typecheck, tests and build, then
+  `wrangler deploy` with the commit hash and subject as the version message.
+  - It asks before deploying while tracked files have uncommitted changes.
+  - `--skip-checks` skips the typecheck and tests.
+  - Wrangler runs through `npx` at a pinned version. It isn't a project
+    dependency.
+- **Auth** is the browser login from `npx wrangler@<pinned> login`. If
+  `CLOUDFLARE_API_TOKEN` is set in the shell, wrangler uses it instead, and
+  the deploy fails with "No access" unless the token has Workers permissions.
+- **Don't use `wrangler pages`.** New Pages projects get redirected to Workers,
+  and `pages project create` fails without a Workers config.
 
 ## Architecture
 
